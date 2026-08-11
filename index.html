@@ -4,56 +4,58 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Layra — Glas · predlog 01</title>
+  <title>Layra — Glas · predlog 02</title>
   <meta name="description"
-    content="Jaz sem Layra. Oglasim se na klice, ki jih vi zamudite: govorim slovensko, poslušam do konca in vam takoj po klicu pošljem, kdo je klical in kaj potrebuje.">
+    content="Layra je glasovna pomočnica za salone: oglasi se na klice, ki jih zamudite, se s stranko dogovori za termin in ga vpiše v koledar. Vi dobite obvestilo.">
   <meta name="theme-color" content="#F1F5FB">
 
   <meta property="og:type" content="website">
   <meta property="og:locale" content="sl_SI">
-  <meta property="og:title" content="Layra — glasovna AI, ki se oglasi na telefon">
+  <meta property="og:title" content="Layra — glasovna pomočnica, ki se oglasi in rezervira termin">
   <meta property="og:description"
-    content="Oglasi se, ko se vi ne morete. Govori slovensko, posluša do konca in vam takoj po klicu pošlje, kdo je klical in kaj je želel.">
+    content="Vsak zamujen klic je termin, ki ga dobi nekdo drug. Layra se oglasi namesto vas, se dogovori za termin in ga vpiše v koledar.">
 
   <link rel="icon"
     href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%231F6FE5'/><stop offset='1' stop-color='%234338CA'/></linearGradient></defs><rect x='4' y='11' width='4' height='10' rx='2' fill='url(%23g)'/><rect x='11' y='6' width='4' height='20' rx='2' fill='url(%23g)'/><rect x='18' y='9' width='4' height='14' rx='2' fill='url(%23g)'/><rect x='25' y='12' width='4' height='8' rx='2' fill='url(%23g)'/></svg>">
   <style>
 /* ============================================================
-   LAYRA — landing · "Glas"
+   LAYRA — landing · "Glas 02"
 
-   The brand is a voice, so the voice is the brand element: a row
-   of speaking bars. It lives in the wordmark, in the hero call
-   card, and as the marker on every reason. Nothing else on the
-   page carries motion or saturation — one motif, repeated small.
+   Same design system as glas.html (porcelain ground, one gradient
+   accent, four-bar voice glyph, transform/opacity-only motion).
+   What changed is the argument, not the paint:
 
-   Same ground rules as before: nothing animates a blur, a shadow
-   or a blend mode. Canvas for the wave, transform/opacity for
-   everything else.
+   1. The page speaks about Layra, not as Layra. First person is
+      quoted speech only — the hero pull-quote and the dialogue.
+   2. Order is problem → proof → solution → result → trust →
+      price → CTA. Every band earns its scroll or is gone.
+   3. Claims are results, not features, and the one that matters
+      most (she *books* the appointment, she doesn't take a
+      message) is stated three times in three different shapes.
+   4. Text is broken up by things you can look at: a loss chain,
+      a calculator on the visitor's own numbers, a calendar that
+      fills itself, a phone that lights up.
+
+   Ground rules unchanged: nothing animates a blur, a shadow or a
+   blend mode. Canvas for the wave, transform/opacity for the rest.
    ============================================================ */
 
 /* ---- tokens ------------------------------------------------ */
 
 :root {
-  /* ground: cool porcelain, pulled back from icy blue toward stone */
   --paper:     #F1F5FB;
   --card:      #FFFFFF;
 
-  /* near-black with a navy bias, not #000 */
   --ink:       #101725;
   --ink-soft:  #5C6779;
   --ink-faint: #8D97A8;
 
-  /* the accent is a gradient, not a flat blue — the voice's colour */
   --azure:     #1F6FE5;
   --indigo:    #4338CA;
 
-  /* muted teal-green for reassurance */
   --pine:      #10786A;
-
-  /* errors stay warm — a blue error just reads as more accent */
   --alert:     #C8372D;
 
-  /* the shadow cards cast: deep navy, never neutral grey */
   --cast:      19, 30, 66;
 
   --line:      rgba(16, 23, 37, .10);
@@ -90,7 +92,8 @@ body {
   overflow-x: hidden;
 }
 
-h1, h2, h3, p, figure, blockquote { margin: 0; }
+h1, h2, h3, p, figure, blockquote, ol, ul { margin: 0; }
+ol, ul { padding: 0; list-style: none; }
 svg { display: block; }
 a { color: inherit; text-decoration: none; }
 button, input { font: inherit; color: inherit; }
@@ -127,7 +130,6 @@ button, input { font: inherit; color: inherit; }
   stroke-linejoin: round;
 }
 
-/* barely-there texture, so the big flat ground doesn't band */
 .grain {
   position: fixed; inset: 0; z-index: 90;
   pointer-events: none;
@@ -137,9 +139,6 @@ button, input { font: inherit; color: inherit; }
 
 /* ---- the voice glyph --------------------------------------- */
 
-/* four bars, everywhere the brand shows its face. animation runs
-   only where a parent says so (.is-live), so a page full of glyphs
-   stays still and the one under your cursor speaks. */
 .glyph { width: 20px; height: 20px; flex: none; }
 .glyph rect {
   fill: url(#voicegrad);
@@ -148,7 +147,8 @@ button, input { font: inherit; color: inherit; }
 }
 .is-live .glyph rect,
 .glyph.glyph--live rect,
-.reason:hover .glyph rect,
+.voice[data-playing] .glyph rect,
+.result:hover .glyph rect,
 .wordmark:hover .glyph rect,
 .foot__brand:hover .glyph rect { animation: speak 1.05s var(--ease) infinite; }
 .glyph rect:nth-child(1) { animation-delay: 0s;    }
@@ -192,7 +192,7 @@ button, input { font: inherit; color: inherit; }
 
 .nav {
   display: flex;
-  gap: clamp(1rem, 2.2vw, 2rem);
+  gap: clamp(.9rem, 2vw, 1.8rem);
   font-size: .93rem;
   font-weight: 500;
   color: var(--ink-soft);
@@ -216,7 +216,7 @@ button, input { font: inherit; color: inherit; }
 .masthead__actions {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
+  gap: 1.1rem;
 }
 
 .link-quiet {
@@ -227,35 +227,34 @@ button, input { font: inherit; color: inherit; }
 }
 .link-quiet:hover { color: var(--ink); }
 
-.btn-call {
+/* the header CTA is the same promise as the hero one, shortened */
+.btn-mast {
   display: inline-flex;
   align-items: center;
-  gap: .55rem;
-  padding: .6rem 1.15rem;
+  gap: .5rem;
+  padding: .62rem 1.15rem;
+  border: 0;
   border-radius: 999px;
-  border: 1px solid rgba(31, 111, 229, .3);
-  background: var(--card);
   font-size: .93rem;
   font-weight: 600;
-  transition: border-color .25s var(--ease), background .25s var(--ease);
+  color: #FFF;
+  cursor: pointer;
+  background: linear-gradient(118deg, var(--azure) 0%, var(--indigo) 100%);
+  box-shadow: 0 6px 16px rgba(31, 111, 229, .24);
+  transition: transform .25s var(--ease), filter .25s var(--ease);
 }
-.btn-call:hover {
-  border-color: rgba(31, 111, 229, .55);
-  background: rgba(31, 111, 229, .05);
-}
-.btn-call .icon { color: var(--azure); }
+.btn-mast:hover { transform: translateY(-1px); filter: brightness(1.06); }
 
 /* ---- hero -------------------------------------------------- */
 
 .hero {
   display: grid;
-  grid-template-columns: minmax(0, 1.04fr) minmax(0, .96fr);
+  grid-template-columns: minmax(0, 1.02fr) minmax(0, .98fr);
   align-items: center;
-  gap: clamp(2rem, 5vw, 4.5rem);
+  gap: clamp(2rem, 5vw, 4rem);
   max-width: var(--shell);
   margin-inline: auto;
-  min-height: calc(100svh - var(--mast) - 6rem);
-  padding: clamp(2.5rem, 6vh, 4rem) var(--gutter) clamp(2.5rem, 6vh, 4rem);
+  padding: clamp(2.25rem, 5vh, 3.5rem) var(--gutter) clamp(2rem, 4vh, 3rem);
 }
 
 .chip {
@@ -283,15 +282,15 @@ button, input { font: inherit; color: inherit; }
 
 .headline {
   margin-top: 1.1rem;
-  max-width: 15ch;
-  font-size: clamp(2.5rem, 5.6vw, 4.3rem);
+  max-width: 17ch;
+  font-size: clamp(2.35rem, 5vw, 3.85rem);
   font-weight: 800;
-  line-height: 1.04;
+  line-height: 1.05;
   letter-spacing: -.035em;
   text-wrap: balance;
 }
 
-.headline__name {
+.headline__hit {
   background: linear-gradient(100deg, var(--azure) 8%, var(--indigo) 82%);
   -webkit-background-clip: text;
   background-clip: text;
@@ -300,20 +299,21 @@ button, input { font: inherit; color: inherit; }
 
 .lede {
   margin-top: 1.15rem;
-  max-width: 46ch;
+  max-width: 48ch;
   font-size: clamp(1rem, 1.35vw, 1.13rem);
   line-height: 1.65;
   color: var(--ink-soft);
 }
+.lede strong { color: var(--ink); font-weight: 700; }
 
-/* ---- the dial ---------------------------------------------- */
+/* ---- the dial (primary CTA) -------------------------------- */
 
 .dial {
   display: flex;
   align-items: center;
   gap: .5rem;
-  width: min(100%, 540px);
-  margin-top: clamp(1.6rem, 3.5vh, 2.3rem);
+  width: min(100%, 545px);
+  margin-top: clamp(1.4rem, 3vh, 2rem);
   padding: .45rem .45rem .45rem 1.55rem;
   border-radius: 999px;
   border: 1px solid var(--line-soft);
@@ -335,10 +335,7 @@ button, input { font: inherit; color: inherit; }
   min-width: 0;
 }
 
-.dial__cc {
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-}
+.dial__cc { font-weight: 700; font-variant-numeric: tabular-nums; }
 
 .dial__input {
   flex: 1;
@@ -370,46 +367,49 @@ button, input { font: inherit; color: inherit; }
 }
 .dial__go:hover { transform: translateY(-1px); filter: brightness(1.06); }
 .dial__go:active { transform: translateY(0); }
-.dial__go[disabled] { cursor: default; filter: saturate(.4) brightness(1.1); transform: none; }
-
-/* ---- reassurance / form status ----------------------------- */
 
 .assure {
   display: inline-flex;
   align-items: center;
   gap: .5rem;
-  margin-top: 1.1rem;
-  font-size: .8rem;
-  font-weight: 700;
-  letter-spacing: .09em;
-  text-transform: uppercase;
-  color: var(--pine);
-}
-.assure .icon { width: 15px; height: 15px; }
-
-/* once it carries a message it stops being a label */
-.assure[data-state] {
-  text-transform: none;
-  letter-spacing: normal;
-  font-weight: 500;
+  margin-top: 1rem;
   font-size: .875rem;
+  line-height: 1.5;
+  color: var(--ink-soft);
 }
-.assure[data-state] .assure__icon { display: none; }
+.assure .icon { width: 15px; height: 15px; color: var(--pine); }
 .assure[data-state="error"]   { color: var(--alert); }
+.assure[data-state="error"] .assure__icon,
+.assure[data-state="success"] .assure__icon { display: none; }
 .assure[data-state="success"] { color: var(--pine); }
+
+/* the second way in, for the ones who will not type their number */
+.hero__alt {
+  margin-top: .55rem;
+  font-size: .875rem;
+  color: var(--ink-faint);
+}
+.hero__alt a {
+  font-weight: 600;
+  color: var(--azure);
+  border-bottom: 1px solid rgba(31, 111, 229, .3);
+}
+.hero__alt a:hover { border-bottom-color: var(--azure); }
 
 /* ---- the call card ----------------------------------------- */
 
-/* the product, playing itself: a call comes in, Layra answers,
-   the summary lands. this is the one place the page really moves. */
+/* the product, playing itself. There is no play button: on a voice
+   product "kateri glas?" is the better first question, and answering
+   it plays the call anyway. */
 .call {
-  width: min(100%, 470px);
+  width: min(100%, 480px);
   justify-self: end;
   border-radius: 20px;
   border: 1px solid var(--line-soft);
   background: var(--card);
   box-shadow: 0 24px 54px rgba(var(--cast), .12), 0 3px 8px rgba(var(--cast), .05);
   overflow: hidden;
+  scroll-margin-top: calc(var(--mast) + 1rem);
 }
 
 .call__bar {
@@ -425,19 +425,114 @@ button, input { font: inherit; color: inherit; }
 .call__bar .icon { width: 15px; height: 15px; color: var(--azure); }
 .call__state { margin-left: auto; font-weight: 500; }
 
+/* ---- the voice picker -------------------------------------- */
+
+/* Four recordings of the same call ship with the page, one per voice,
+   so a click is audible immediately — nothing is synthesised or
+   fetched from an API while the visitor waits. Picking a voice is
+   what starts playback; switching mid-call resumes at the same line,
+   which is the only way to actually compare two voices. */
+
+.voices { padding: .95rem 1.15rem 1rem; }
+
+.voices__top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.voices__label { font-size: .875rem; font-weight: 600; }
+
+.voices__time {
+  font-size: .8rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-faint);
+}
+
+.voices__row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: .4rem;
+  margin-top: .6rem;
+}
+
+.voice {
+  display: flex;
+  align-items: center;
+  gap: .42rem;
+  min-width: 0;
+  padding: .48rem .55rem;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--card);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color .25s var(--ease), background .25s var(--ease),
+              transform .25s var(--ease);
+}
+.voice:hover { transform: translateY(-1px); border-color: rgba(31, 111, 229, .34); }
+
+.voice .glyph { width: 13px; height: 13px; }
+/* only the chosen voice gets the brand gradient; the rest wait in grey */
+.voice:not([aria-pressed="true"]) .glyph rect { fill: #C3CAD6; }
+
+.voice__meta { min-width: 0; }
+.voice__name {
+  display: block;
+  font-size: .84rem;
+  font-weight: 700;
+  letter-spacing: -.012em;
+}
+.voice__tag {
+  display: block;
+  font-size: .68rem;
+  line-height: 1.35;
+  color: var(--ink-faint);
+}
+
+.voice[aria-pressed="true"] {
+  border-color: rgba(31, 111, 229, .38);
+  background: linear-gradient(118deg, rgba(31, 111, 229, .10), rgba(67, 56, 202, .10));
+}
+.voice[aria-pressed="true"] .voice__tag { color: var(--azure); }
+
+.voices__track {
+  position: relative;
+  height: 4px;
+  margin-top: .8rem;
+  border-radius: 4px;
+  background: rgba(16, 23, 37, .09);
+  overflow: hidden;
+}
+.voices__fill {
+  position: absolute; inset: 0;
+  transform: scaleX(0);
+  transform-origin: left;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--azure), var(--indigo));
+}
+
+.voices__note {
+  margin-top: .45rem;
+  font-size: .76rem;
+  line-height: 1.45;
+  color: var(--ink-faint);
+}
+
 .wave {
   display: block;
   width: 100%;
-  height: 58px;
+  height: 54px;
   background: linear-gradient(180deg, rgba(31, 111, 229, .045), rgba(31, 111, 229, 0));
 }
 
 .script {
   display: flex;
   flex-direction: column;
-  gap: .55rem;
-  min-height: 232px;
-  padding: 1rem 1.15rem 1.2rem;
+  gap: .5rem;
+  min-height: 246px;
+  padding: .95rem 1.15rem 1.1rem;
 }
 
 .script__line {
@@ -448,7 +543,6 @@ button, input { font: inherit; color: inherit; }
   line-height: 1.5;
 }
 
-/* only a JS-driven page hides the dialogue before playing it */
 .js .script__line {
   opacity: 0;
   transform: translateY(8px);
@@ -479,7 +573,6 @@ button, input { font: inherit; color: inherit; }
 }
 .script__line--layra .script__who { color: var(--azure); }
 
-/* the caret while a line is being spoken */
 .script__line.saying::after {
   content: "";
   display: inline-block;
@@ -491,12 +584,12 @@ button, input { font: inherit; color: inherit; }
 }
 @keyframes caret { 50% { opacity: 0; } }
 
-/* what the owner receives, sliding in under the conversation */
+/* the booking, not the message: this slip says "zapisano v koledar" */
 .slip {
   display: flex;
   align-items: center;
   gap: .7rem;
-  margin-top: .45rem;
+  margin-top: .4rem;
   padding: .75rem .9rem;
   border-radius: 12px;
   border: 1px dashed rgba(16, 120, 106, .38);
@@ -520,15 +613,64 @@ button, input { font: inherit; color: inherit; }
   color: var(--ink-faint);
 }
 
+/* ---- the answer strip -------------------------------------- */
+
+/* what a visitor still did not know after 60 seconds on the old
+   page: price, whether she really books, what she plugs into,
+   what it takes to start. Four lines, above the fold's edge. */
+.facts {
+  max-width: var(--shell);
+  margin-inline: auto;
+  padding: 0 var(--gutter);
+}
+
+.facts__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.fact {
+  padding: 1.05rem 1.15rem;
+  background: var(--card);
+}
+.fact__q {
+  font-size: .76rem;
+  font-weight: 700;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--azure);
+}
+.fact__a {
+  margin-top: .4rem;
+  font-size: .93rem;
+  font-weight: 600;
+  line-height: 1.45;
+}
+.fact__a small {
+  display: block;
+  margin-top: .2rem;
+  font-size: .8rem;
+  font-weight: 500;
+  color: var(--ink-faint);
+}
+
 /* ---- shared band scaffolding ------------------------------- */
 
+/* tighter than predlog 01 on purpose: this page carries six more
+   sections, so every band pays for itself in vertical rhythm too. */
 .band {
   max-width: var(--shell);
   margin-inline: auto;
-  padding: clamp(3.5rem, 9vh, 6rem) var(--gutter);
+  padding: clamp(2.6rem, 6vh, 4rem) var(--gutter);
   border-top: 1px solid var(--line);
   scroll-margin-top: calc(var(--mast) + 1rem);
 }
+.band--tight { padding-block: clamp(2.5rem, 6vh, 3.75rem); }
 
 .band__eyebrow {
   font-size: .8rem;
@@ -544,7 +686,7 @@ button, input { font: inherit; color: inherit; }
   font-weight: 800;
   letter-spacing: -.025em;
   line-height: 1.15;
-  max-width: 24ch;
+  max-width: 26ch;
   text-wrap: balance;
 }
 
@@ -556,160 +698,531 @@ button, input { font: inherit; color: inherit; }
   color: var(--ink-soft);
 }
 
-/* ---- reasons ----------------------------------------------- */
+.band__head--split {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  align-items: end;
+  gap: clamp(1.5rem, 4vw, 3rem);
+}
 
-.reasons {
+/* ---- problem ----------------------------------------------- */
+
+/* short lines, hard return after each — this is the one place on
+   the page where the rhythm does the arguing. */
+.beat {
+  margin-top: 1.1rem;
+  font-size: clamp(1.05rem, 1.6vw, 1.2rem);
+  font-weight: 600;
+  line-height: 1.55;
+  max-width: 34ch;
+}
+.beat span { display: block; }
+.beat span + span { margin-top: .15rem; }
+.beat .beat--soft { font-weight: 500; color: var(--ink-soft); }
+
+.chain {
+  display: flex;
+  align-items: stretch;
+  gap: .55rem;
+  margin-top: clamp(1.75rem, 4vh, 2.5rem);
+}
+
+.chain__link {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  margin-top: clamp(1.75rem, 4vh, 2.75rem);
-  max-width: 780px;
+  gap: .3rem;
+  padding: .95rem 1rem;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: var(--card);
 }
-
-.reason {
-  display: grid;
-  grid-template-columns: 44px minmax(0, 15rem) 1fr;
-  align-items: baseline;
-  gap: .4rem 1.25rem;
-  padding: 1.15rem 0;
-  border-top: 1px solid var(--line-soft);
-}
-.reason:first-child { border-top: 0; }
-
-.reason .glyph { align-self: center; }
-
-.reason__claim {
-  font-size: 1.08rem;
+.chain__no {
+  font-size: .72rem;
   font-weight: 700;
-  letter-spacing: -.012em;
-}
-
-.reason__body {
-  font-size: .95rem;
-  line-height: 1.6;
-  color: var(--ink-soft);
-}
-
-/* ---- steps ------------------------------------------------- */
-
-.steps {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: clamp(1.5rem, 4vw, 3rem);
-  margin-top: clamp(1.75rem, 4vh, 2.75rem);
-}
-
-.step {
-  position: relative;
-  padding-top: 1.1rem;
-}
-.step::before {
-  content: "";
-  position: absolute; top: 0; left: 0;
-  width: 2.4rem; height: 3px;
-  border-radius: 3px;
-  background: linear-gradient(90deg, var(--azure), var(--indigo));
-}
-
-.step__no {
-  font-size: .8rem;
-  font-weight: 700;
-  letter-spacing: .09em;
+  letter-spacing: .08em;
   color: var(--ink-faint);
   font-variant-numeric: tabular-nums;
 }
+.chain__what { font-size: .98rem; font-weight: 700; letter-spacing: -.01em; }
+.chain__why  { font-size: .82rem; line-height: 1.45; color: var(--ink-soft); }
 
-.step__claim {
-  margin-top: .35rem;
+/* the last link is where it hurts, so it is the only coloured one */
+.chain__link--end {
+  border-color: rgba(200, 55, 45, .3);
+  background: rgba(200, 55, 45, .04);
+}
+.chain__link--end .chain__what { color: var(--alert); }
+
+.chain__arrow {
+  align-self: center;
+  flex: none;
+  font-size: 1.05rem;
+  color: var(--ink-faint);
+}
+
+.chain__fix {
+  margin-top: 1.1rem;
   font-size: 1.05rem;
   font-weight: 700;
-  letter-spacing: -.012em;
 }
+.chain__fix span { color: var(--azure); }
 
-.step__body {
-  margin-top: .4rem;
-  font-size: .95rem;
-  line-height: 1.6;
-  color: var(--ink-soft);
-  max-width: 30ch;
-}
+/* ---- calculator -------------------------------------------- */
 
-/* ---- proof ------------------------------------------------- */
-
-.proof {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  align-items: center;
-  gap: clamp(2rem, 5vw, 4.5rem);
-}
-
-.proof__card {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
-
-.msg {
-  width: min(100%, 430px);
-  background: var(--card);
-  border: 1px solid var(--line);
+/* the visitor's own arithmetic, not a borrowed statistic. every
+   number on screen is one they typed or one derived in front of
+   them, and the assumption is printed under it. */
+.calc {
+  align-self: start;
+  padding: 1.35rem 1.4rem 1.25rem;
   border-radius: 18px;
-  padding: 1.2rem 1.35rem;
+  border: 1px solid var(--line);
+  background: var(--card);
   box-shadow: 0 14px 34px rgba(var(--cast), .09);
 }
-.msg__head {
+
+.calc__title {
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--azure);
+}
+
+.calc__row { display: block; margin-top: 1.05rem; }
+.calc__top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: .9rem;
+  font-weight: 600;
+}
+.calc__val {
+  font-variant-numeric: tabular-nums;
+  color: var(--azure);
+}
+.calc__row input[type="range"] {
+  width: 100%;
+  margin-top: .5rem;
+  accent-color: var(--azure);
+  cursor: pointer;
+}
+
+.calc__out {
+  margin-top: 1.3rem;
+  padding-top: 1.05rem;
+  border-top: 1px dashed var(--line);
+}
+.calc__num {
+  display: block;
+  font-size: clamp(1.9rem, 3.6vw, 2.5rem);
+  font-weight: 800;
+  letter-spacing: -.03em;
+  font-variant-numeric: tabular-nums;
+  background: linear-gradient(100deg, var(--azure) 8%, var(--indigo) 82%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.calc__cap { margin-top: .2rem; font-size: .95rem; font-weight: 600; }
+.calc__note {
+  margin-top: .75rem;
+  font-size: .78rem;
+  line-height: 1.5;
+  color: var(--ink-faint);
+}
+
+/* ---- how it works ------------------------------------------ */
+
+.how {
+  display: grid;
+  grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr);
+  align-items: start;
+  gap: clamp(2rem, 5vw, 4rem);
+  margin-top: clamp(1.75rem, 4vh, 2.5rem);
+}
+
+.flow { position: relative; }
+
+/* the rail that runs through the four steps */
+.flow::before {
+  content: "";
+  position: absolute;
+  left: 15px; top: .6rem; bottom: 1.8rem;
+  width: 2px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, var(--azure), var(--indigo));
+  opacity: .3;
+}
+
+.stepx {
+  position: relative;
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  gap: .2rem .95rem;
+  padding-bottom: 1.5rem;
+}
+.stepx:last-child { padding-bottom: 0; }
+
+.stepx__dot {
+  grid-row: span 2;
+  display: grid;
+  place-items: center;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--card);
+  font-size: .78rem;
+  font-weight: 700;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+.stepx--key .stepx__dot {
+  border-color: transparent;
+  color: #FFF;
+  background: linear-gradient(118deg, var(--azure), var(--indigo));
+}
+
+.stepx__claim { font-size: 1.05rem; font-weight: 700; letter-spacing: -.012em; }
+.stepx__body { margin-top: .3rem; font-size: .93rem; line-height: 1.6; color: var(--ink-soft); }
+.stepx--key .stepx__claim { color: var(--azure); }
+
+/* ---- the stage: calendar + phone ---------------------------- */
+
+/* the phone hangs off the calendar's bottom corner; the padding is
+   what keeps it from sitting on top of the day's other bookings */
+.stage { position: relative; padding-bottom: 5.5rem; }
+
+.cal {
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  box-shadow: 0 18px 42px rgba(var(--cast), .10);
+  overflow: hidden;
+}
+
+.cal__bar {
   display: flex;
   align-items: center;
   gap: .55rem;
+  padding: .75rem 1rem;
+  border-bottom: 1px solid var(--line-soft);
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--ink-faint);
+}
+.cal__bar .icon { width: 15px; height: 15px; color: var(--azure); }
+.cal__day { margin-left: auto; font-weight: 500; }
+
+.cal__grid { padding: .5rem .75rem .9rem; }
+
+.cal__slot {
+  display: grid;
+  grid-template-columns: 3.4rem 1fr;
+  align-items: center;
+  gap: .8rem;
+  padding: .5rem .3rem;
+  border-top: 1px solid var(--line-soft);
+  font-size: .88rem;
+}
+.cal__slot:first-child { border-top: 0; }
+.cal__time {
   font-size: .8rem;
   font-weight: 600;
   color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
 }
-.msg__head .icon { width: 15px; height: 15px; color: var(--azure); }
-.msg__from { margin-top: .65rem; font-size: 1rem; font-weight: 700; }
-.msg__body { margin-top: .3rem; font-size: .95rem; line-height: 1.55; color: var(--ink-soft); }
-.msg__foot {
-  margin-top: .85rem;
-  padding-top: .75rem;
-  border-top: 1px dashed var(--line);
-  font-size: .82rem;
-  color: var(--pine);
+.cal__fill {
+  padding: .45rem .7rem;
+  border-radius: 9px;
+  background: rgba(16, 23, 37, .04);
+  color: var(--ink-soft);
+  font-weight: 500;
+}
+.cal__fill--free { color: var(--ink-faint); font-style: italic; }
+
+/* the slot Layra takes — it writes itself in when the band is seen */
+.cal__slot--new .cal__fill {
   font-weight: 600;
+  color: #FFF;
+  background: linear-gradient(118deg, var(--azure), var(--indigo));
+}
+.js .cal__slot--new .cal__fill {
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: opacity .5s var(--ease) .35s, transform .5s var(--ease) .35s;
+}
+.js .stage.in .cal__slot--new .cal__fill { opacity: 1; transform: none; }
+
+.cal__tag {
+  display: block;
+  font-size: .72rem;
+  font-weight: 500;
+  opacity: .85;
 }
 
-.proof__note {
-  width: min(100%, 430px);
-  margin-top: .6rem;
-  font-size: .78rem;
+/* the owner's phone, overlapping the calendar's corner */
+.phone {
+  position: absolute;
+  right: 0; bottom: 0;
+  width: min(58%, 250px);
+  padding: .5rem;
+  border-radius: 26px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  box-shadow: 0 20px 46px rgba(var(--cast), .16);
+}
+.js .phone {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity .55s var(--ease) 1.05s, transform .55s var(--ease) 1.05s;
+}
+.js .stage.in .phone { opacity: 1; transform: none; }
+
+.phone__notch {
+  width: 34%;
+  height: 4px;
+  margin: .15rem auto .55rem;
+  border-radius: 4px;
+  background: rgba(16, 23, 37, .12);
+}
+
+.phone__screen {
+  padding: .7rem .75rem .85rem;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(31, 111, 229, .07), rgba(67, 56, 202, .05));
+}
+
+.push {
+  padding: .65rem .7rem;
+  border-radius: 12px;
+  background: var(--card);
+  box-shadow: 0 3px 10px rgba(var(--cast), .08);
+}
+.push__head {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  font-size: .66rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--azure);
+}
+.push__head .glyph { width: 13px; height: 13px; }
+.push__title { margin-top: .3rem; font-size: .82rem; font-weight: 700; }
+.push__body { margin-top: .15rem; font-size: .76rem; line-height: 1.45; color: var(--ink-soft); }
+.push__time { margin-top: .4rem; font-size: .68rem; color: var(--ink-faint); }
+
+.stage__note {
+  position: absolute;
+  left: 0; bottom: .35rem;
+  max-width: 40%;
+  font-size: .76rem;
+  line-height: 1.45;
   color: var(--ink-faint);
 }
 
-/* ---- trust strip ------------------------------------------- */
+/* ---- the difference (before / after) ----------------------- */
 
-.trust {
+.versus {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: clamp(2rem, 4.5vh, 3rem);
+}
+
+.vs {
+  padding: 1.2rem 1.3rem 1.3rem;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  background: var(--card);
+}
+.vs--them { background: rgba(16, 23, 37, .02); }
+.vs--us { border-color: rgba(31, 111, 229, .28); }
+
+.vs__label {
+  font-size: .76rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.vs--us .vs__label { color: var(--azure); }
+
+.vs__title { margin-top: .35rem; font-size: 1.05rem; font-weight: 700; letter-spacing: -.012em; }
+
+.vs__path {
   display: flex;
   flex-wrap: wrap;
-  gap: .8rem 2.5rem;
-  margin-top: clamp(1.5rem, 3.5vh, 2.25rem);
+  align-items: center;
+  gap: .4rem;
+  margin-top: .9rem;
+  font-size: .84rem;
 }
-.trust__item {
-  display: inline-flex;
+.vs__node {
+  padding: .35rem .6rem;
+  border-radius: 8px;
+  background: rgba(16, 23, 37, .05);
+  color: var(--ink-soft);
+}
+.vs__node--hit {
+  font-weight: 700;
+  color: #FFF;
+  background: linear-gradient(118deg, var(--azure), var(--indigo));
+}
+.vs__node--cost {
+  font-weight: 600;
+  color: var(--alert);
+  background: rgba(200, 55, 45, .08);
+}
+.vs__sep { color: var(--ink-faint); }
+
+.vs__foot { margin-top: .9rem; font-size: .86rem; line-height: 1.55; color: var(--ink-soft); }
+
+/* ---- results (the five) ------------------------------------ */
+
+.results {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  margin-top: clamp(1.75rem, 4vh, 2.5rem);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.result {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  align-items: start;
+  gap: .35rem .8rem;
+  padding: 1.15rem 1.35rem 1.25rem;
+  background: var(--card);
+}
+/* the fifth cell spans, so the grid never ends on a gap */
+.result:last-child { grid-column: 1 / -1; }
+
+.result .glyph { width: 18px; height: 18px; margin-top: .15rem; }
+.result__claim { font-size: 1.03rem; font-weight: 700; letter-spacing: -.012em; }
+.result__body {
+  grid-column: 2;
+  font-size: .92rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+/* ---- trust -------------------------------------------------- */
+
+.honest {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: clamp(1.75rem, 4vh, 2.5rem);
+}
+
+.hon {
+  padding: 1.15rem 1.3rem 1.25rem;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: var(--card);
+}
+.hon__head {
+  display: flex;
   align-items: center;
   gap: .55rem;
   font-size: .95rem;
-  font-weight: 600;
+  font-weight: 700;
 }
-.trust__item .icon { width: 16px; height: 16px; color: var(--pine); }
+.hon__head .icon { width: 16px; height: 16px; color: var(--pine); }
+.hon__head .icon--warn { color: var(--ink-faint); }
+.hon__body { margin-top: .45rem; font-size: .9rem; line-height: 1.6; color: var(--ink-soft); }
 
-/* ---- faq --------------------------------------------------- */
+/* ---- price -------------------------------------------------- */
+
+.plans {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: clamp(1.75rem, 4vh, 2.5rem);
+}
+
+.plan {
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 1.5rem 1.6rem;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  background: var(--card);
+}
+.plan--now {
+  border-color: rgba(31, 111, 229, .3);
+  box-shadow: 0 18px 42px rgba(var(--cast), .10);
+}
+
+.plan__label {
+  font-size: .76rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.plan--now .plan__label { color: var(--azure); }
+
+.plan__price {
+  margin-top: .5rem;
+  font-size: clamp(2rem, 4vw, 2.7rem);
+  font-weight: 800;
+  letter-spacing: -.035em;
+}
+.plan__price small { font-size: .95rem; font-weight: 600; color: var(--ink-soft); letter-spacing: 0; }
+
+.plan__sub { margin-top: .35rem; font-size: .95rem; line-height: 1.6; color: var(--ink-soft); }
+
+.plan__list { margin-top: 1.05rem; display: flex; flex-direction: column; gap: .5rem; }
+.plan__list li {
+  display: flex;
+  align-items: flex-start;
+  gap: .55rem;
+  font-size: .9rem;
+  line-height: 1.5;
+}
+.plan__list .icon { width: 15px; height: 15px; margin-top: .18rem; color: var(--pine); }
+
+.plan__foot {
+  margin-top: 1.15rem;
+  padding-top: .9rem;
+  border-top: 1px dashed var(--line);
+  font-size: .82rem;
+  line-height: 1.55;
+  color: var(--ink-faint);
+}
+
+/* ---- faq ---------------------------------------------------- */
 
 .faq {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 clamp(1.75rem, 4vw, 3.25rem);
   margin-top: clamp(1.5rem, 3.5vh, 2.25rem);
-  max-width: 780px;
+  align-items: start;
 }
 
-.faq details {
-  border-top: 1px solid var(--line-soft);
+.faq__col { display: block; }
+
+.faq__group {
+  font-size: .76rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  padding-bottom: .6rem;
 }
+
+.faq details { border-top: 1px solid var(--line-soft); }
 .faq details:last-child { border-bottom: 1px solid var(--line-soft); }
 
 .faq summary {
@@ -717,8 +1230,8 @@ button, input { font: inherit; color: inherit; }
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 1.05rem 0;
-  font-size: 1rem;
+  padding: .95rem 0;
+  font-size: .97rem;
   font-weight: 600;
   cursor: pointer;
   list-style: none;
@@ -735,9 +1248,9 @@ button, input { font: inherit; color: inherit; }
 .faq details[open] summary .icon { transform: rotate(45deg); }
 
 .faq__body {
-  padding: 0 0 1.15rem;
-  max-width: 62ch;
-  font-size: .95rem;
+  padding: 0 0 1.05rem;
+  max-width: 52ch;
+  font-size: .92rem;
   line-height: 1.65;
   color: var(--ink-soft);
 }
@@ -747,21 +1260,20 @@ button, input { font: inherit; color: inherit; }
 .finale {
   max-width: var(--shell);
   margin-inline: auto;
-  padding: 0 var(--gutter) clamp(3.5rem, 8vh, 5.5rem);
+  padding: clamp(2rem, 5vh, 3rem) var(--gutter) clamp(3.5rem, 8vh, 5.5rem);
 }
 
 .finale__panel {
   position: relative;
   overflow: hidden;
   border-radius: 24px;
-  padding: clamp(2.5rem, 6vh, 4rem) clamp(1.5rem, 5vw, 4rem);
+  padding: clamp(2.5rem, 6vh, 3.75rem) clamp(1.5rem, 5vw, 4rem);
   background: linear-gradient(118deg, var(--azure) 0%, var(--indigo) 100%);
   color: #FFF;
   text-align: center;
   box-shadow: 0 24px 54px rgba(31, 111, 229, .28);
 }
 
-/* quiet echo of the bars, drawn once, not animated */
 .finale__panel::before {
   content: "";
   position: absolute; inset: 0;
@@ -784,10 +1296,10 @@ button, input { font: inherit; color: inherit; }
 .finale__lede {
   position: relative;
   margin: .8rem auto 0;
-  max-width: 46ch;
+  max-width: 48ch;
   font-size: 1rem;
   line-height: 1.6;
-  color: rgba(255, 255, 255, .82);
+  color: rgba(255, 255, 255, .84);
 }
 
 .finale__actions {
@@ -804,11 +1316,13 @@ button, input { font: inherit; color: inherit; }
   align-items: center;
   gap: .55rem;
   padding: .85rem 1.5rem;
+  border: 0;
   border-radius: 999px;
   background: #FFF;
   color: var(--ink);
   font-size: .97rem;
   font-weight: 600;
+  cursor: pointer;
   transition: transform .25s var(--ease), box-shadow .25s var(--ease);
 }
 .btn-solid:hover { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(16, 23, 37, .25); }
@@ -829,6 +1343,13 @@ button, input { font: inherit; color: inherit; }
   transition: background .25s var(--ease), border-color .25s var(--ease);
 }
 .btn-ghost:hover { background: rgba(255, 255, 255, .12); border-color: rgba(255, 255, 255, .7); }
+
+.finale__fine {
+  position: relative;
+  margin-top: 1.1rem;
+  font-size: .82rem;
+  color: rgba(255, 255, 255, .72);
+}
 
 /* ---- footer ------------------------------------------------ */
 
@@ -857,10 +1378,7 @@ button, input { font: inherit; color: inherit; }
   font-size: .95rem;
 }
 
-.foot__tag {
-  font-size: .88rem;
-  color: var(--ink-soft);
-}
+.foot__tag { font-size: .88rem; color: var(--ink-soft); }
 
 .foot__links {
   display: flex;
@@ -871,9 +1389,46 @@ button, input { font: inherit; color: inherit; }
 .foot__links a { transition: color .25s var(--ease); }
 .foot__links a:hover { color: var(--ink); }
 
+/* ---- sticky mobile CTA ------------------------------------- */
+
+/* on a phone the CTA scrolls away in one flick; this brings it back
+   without ever covering the desktop layout. */
+.dock {
+  display: none;
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 60;
+  padding: .6rem var(--gutter) calc(.6rem + env(safe-area-inset-bottom));
+  background: rgba(255, 255, 255, .94);
+  border-top: 1px solid var(--line);
+}
+.dock__row { display: flex; gap: .6rem; }
+.dock a, .dock button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  padding: .8rem 1rem;
+  border-radius: 999px;
+  font-size: .92rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+/* the primary gets the room it needs so its label never wraps */
+.dock__try {
+  flex: 1.7;
+  border: 0;
+  color: #FFF;
+  background: linear-gradient(118deg, var(--azure), var(--indigo));
+}
+.dock__call {
+  flex: 1;
+  border: 1px solid var(--line);
+  background: var(--card);
+}
+.dock__call .icon { color: var(--azure); }
+
 /* ---- reveal ------------------------------------------------ */
 
-/* transitions, not animations: nothing repaints once it has settled */
 .js [data-reveal] {
   opacity: 0;
   transform: translateY(16px);
@@ -884,23 +1439,33 @@ button, input { font: inherit; color: inherit; }
 
 /* ---- responsive -------------------------------------------- */
 
+@media (max-width: 1080px) {
+  .facts__grid { grid-template-columns: repeat(2, 1fr); }
+}
+
 @media (max-width: 980px) {
   .nav { display: none; }
 
-  .hero {
-    grid-template-columns: 1fr;
-    min-height: 0;
-    gap: 2.5rem;
-  }
+  .hero { grid-template-columns: 1fr; gap: 2.25rem; }
   .call { justify-self: stretch; width: 100%; }
 
-  .proof { grid-template-columns: 1fr; }
-  .proof__card { align-items: flex-start; }
+  .band__head--split { grid-template-columns: 1fr; align-items: start; }
+  .how { grid-template-columns: 1fr; }
+  .stage { padding-bottom: 0; }
+  .phone { position: static; width: 100%; max-width: 300px; margin: 1rem 0 0; }
+  .stage__note { position: static; max-width: none; margin-top: .9rem; }
+
+  .versus { grid-template-columns: 1fr; }
+  .results { grid-template-columns: 1fr; }
+  .result:last-child { grid-column: auto; }
+  .honest, .plans { grid-template-columns: 1fr; }
+  .faq { grid-template-columns: 1fr; gap: 0; }
+  .faq__col + .faq__col .faq__group { padding-top: 1.5rem; }
 }
 
 @media (max-width: 720px) {
-  .btn-call { padding: .55rem .95rem; font-size: .875rem; }
   .link-quiet { display: none; }
+  .btn-mast { padding: .55rem .95rem; font-size: .875rem; }
 
   .dial {
     flex-direction: column;
@@ -912,16 +1477,18 @@ button, input { font: inherit; color: inherit; }
   .dial__field { padding: .5rem 1rem .25rem; }
   .dial__go { justify-content: center; padding: .95rem 1.4rem; }
 
-  .reason {
-    grid-template-columns: 44px 1fr;
-    grid-template-rows: auto auto;
-  }
-  .reason .glyph { grid-row: 1; align-self: baseline; }
-  .reason__claim { grid-column: 2; }
-  .reason__body { grid-column: 2; }
+  .facts__grid { grid-template-columns: 1fr; }
 
-  .steps { grid-template-columns: 1fr; gap: 1.75rem; }
-  .step__body { max-width: none; }
+  /* four voices across a phone would clip their own names */
+  .voices__row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  /* stacked, but compact — four full-height cards would own the screen */
+  .chain { flex-direction: column; gap: .3rem; }
+  .chain__link { padding: .7rem .9rem; gap: .15rem; }
+  .chain__arrow { transform: rotate(90deg); font-size: .95rem; }
+
+  .dock { display: block; }
+  .foot__inner { padding-bottom: 6rem; }
 }
 
 /* ---- reduced motion ---------------------------------------- */
@@ -934,7 +1501,7 @@ button, input { font: inherit; color: inherit; }
     transition-duration: .001ms !important;
   }
   .js [data-reveal] { opacity: 1; transform: none; }
-  .script__line, .slip { opacity: 1; transform: none; }
+  .script__line, .slip, .phone, .cal__slot--new .cal__fill { opacity: 1; transform: none; }
 }
   </style>
   <script>document.documentElement.classList.add('js');</script>
@@ -969,21 +1536,16 @@ button, input { font: inherit; color: inherit; }
       </a>
 
       <nav class="nav" aria-label="Glavni meni">
-        <a href="#zakaj">Zakaj Layra</a>
+        <a href="#demo">Poslušajte</a>
+        <a href="#problem">Problem</a>
         <a href="#kako-deluje">Kako deluje</a>
-        <a href="#vprasanja">Pogosta vprašanja</a>
+        <a href="#cena">Cena</a>
+        <a href="#vprasanja">Vprašanja</a>
       </nav>
 
       <div class="masthead__actions">
         <a class="link-quiet" id="nav-login" href="#prijava">Prijava</a>
-        <!-- TODO: zamenjaj z Layrino pravo telefonsko številko. -->
-        <a class="btn-call" href="tel:+386XXXXXXXX">
-          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-            <path
-              d="M6.6 3.5 9 8.2l-2 1.7a12 12 0 0 0 5.4 5.4l1.7-2 4.7 2.4a1.6 1.6 0 0 1 .8 1.8l-.4 1.7a2 2 0 0 1-2.2 1.5C10.3 20 4 13.7 3.2 6.5A2 2 0 0 1 4.7 4.3l1.7-.4a1.6 1.6 0 0 1 1.8.8Z" />
-          </svg>
-          Pokliči Layro
-        </a>
+        <button class="btn-mast" type="button" data-try>Preizkusite brezplačno</button>
       </div>
 
     </div>
@@ -991,23 +1553,27 @@ button, input { font: inherit; color: inherit; }
 
   <main id="glavno">
 
+    <!-- ============================================================
+         HERO — the result first, the product playing second.
+         The headline is the owner's loss, not Layra's introduction.
+         ============================================================ -->
     <section class="hero">
 
       <div class="hero__copy">
         <p class="chip" data-reveal>
           <span class="chip__dot" aria-hidden="true"></span>
-          Na liniji — 24 ur, vse dni
+          Pilot · prvi trije saloni brezplačno
         </p>
 
         <h1 class="headline" data-reveal style="--d:.08s">
-          Jaz sem <span class="headline__name">Layra</span>.
-          Oglasim se, ko se vi ne&nbsp;morete.
+          Vsak zamujen klic je <span class="headline__hit">termin, ki ga dobi nekdo drug</span>.
         </h1>
 
         <p class="lede" data-reveal style="--d:.16s">
-          Govorim slovensko, poslušam do konca in vam takoj po klicu
-          pošljem, kdo je klical in kaj potrebuje. Vi medtem mirno
-          delate naprej.
+          Layra je glasovna pomočnica za salone. Oglasi se, ko se vi ne morete,
+          se s stranko pogovori po slovensko in <strong>termin vpiše v vaš
+          koledar</strong> — ne le zapiše sporočila. Vi dobite obvestilo, kdo
+          pride in kdaj.
         </p>
 
         <form class="dial" id="dial" data-reveal style="--d:.24s" novalidate>
@@ -1022,7 +1588,7 @@ button, input { font: inherit; color: inherit; }
               <path
                 d="M6.6 3.5 9 8.2l-2 1.7a12 12 0 0 0 5.4 5.4l1.7-2 4.7 2.4a1.6 1.6 0 0 1 .8 1.8l-.4 1.7a2 2 0 0 1-2.2 1.5C10.3 20 4 13.7 3.2 6.5A2 2 0 0 1 4.7 4.3l1.7-.4a1.6 1.6 0 0 1 1.8.8Z" />
             </svg>
-            <span class="dial__label">Naj me Layra pokliče</span>
+            <span class="dial__label">Preizkusite Layro</span>
           </button>
         </form>
 
@@ -1031,12 +1597,19 @@ button, input { font: inherit; color: inherit; }
             <path d="M12 3.2 19 6v5.9c0 4.2-2.8 7.6-7 8.9-4.2-1.3-7-4.7-7-8.9V6z" />
             <path d="m8.9 12.1 2.1 2.1 4.1-4.1" />
           </svg>
-          <span class="assure__text">Klic je brezplačen</span>
+          <span class="assure__text">Layra vas pokliče v nekaj sekundah — brezplačno, brez obveznosti.</span>
+        </p>
+
+        <p class="hero__alt" data-reveal style="--d:.38s">
+          Ali pa jo pokličite sami:
+          <!-- TODO: zamenjaj z Layrino pravo telefonsko številko. -->
+          <a href="tel:+386XXXXXXXX">0X XXX XX XX</a>
         </p>
       </div>
 
-      <!-- the product, playing itself on a loop -->
-      <figure class="call" data-reveal style="--d:.2s" aria-label="Primer, kako Layra sprejme klic">
+      <!-- the demo: a voice product has to be heard, and in whose voice is
+           the visitor's choice, so the voices are the controls -->
+      <figure class="call" id="demo" data-reveal style="--d:.2s" aria-label="Primer klica, ki ga sprejme Layra">
         <div class="call__bar">
           <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
             <path
@@ -1046,9 +1619,84 @@ button, input { font: inherit; color: inherit; }
           <span class="call__state" id="call-state">zvoni …</span>
         </div>
 
+        <!-- the buttons are the voices: choosing one plays the same call in it.
+             `data-voice` matches the ids in the VOICES registry below. -->
+        <div class="voices" id="voices">
+          <div class="voices__top">
+            <p class="voices__label" id="voices-label">Izberite glas in poslušajte</p>
+            <span class="voices__time" id="voice-time" aria-hidden="true"></span>
+          </div>
+
+          <div class="voices__row" role="group" aria-labelledby="voices-label">
+            <button class="voice" type="button" data-voice="nina" aria-pressed="true">
+              <svg class="glyph" viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="2.5" y="8.5" width="3.4" height="7" rx="1.7" />
+                <rect x="8.2" y="4.5" width="3.4" height="15" rx="1.7" />
+                <rect x="13.9" y="7" width="3.4" height="10" rx="1.7" />
+                <rect x="19.6" y="9.5" width="3.4" height="5" rx="1.7" />
+              </svg>
+              <span class="voice__meta">
+                <span class="voice__name">Nina</span>
+                <span class="voice__tag">topla</span>
+              </span>
+            </button>
+
+            <button class="voice" type="button" data-voice="maja" aria-pressed="false">
+              <svg class="glyph" viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="2.5" y="8.5" width="3.4" height="7" rx="1.7" />
+                <rect x="8.2" y="4.5" width="3.4" height="15" rx="1.7" />
+                <rect x="13.9" y="7" width="3.4" height="10" rx="1.7" />
+                <rect x="19.6" y="9.5" width="3.4" height="5" rx="1.7" />
+              </svg>
+              <span class="voice__meta">
+                <span class="voice__name">Maja</span>
+                <span class="voice__tag">mirna</span>
+              </span>
+            </button>
+
+            <button class="voice" type="button" data-voice="klara" aria-pressed="false">
+              <svg class="glyph" viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="2.5" y="8.5" width="3.4" height="7" rx="1.7" />
+                <rect x="8.2" y="4.5" width="3.4" height="15" rx="1.7" />
+                <rect x="13.9" y="7" width="3.4" height="10" rx="1.7" />
+                <rect x="19.6" y="9.5" width="3.4" height="5" rx="1.7" />
+              </svg>
+              <span class="voice__meta">
+                <span class="voice__name">Klara</span>
+                <span class="voice__tag">jasna</span>
+              </span>
+            </button>
+
+            <button class="voice" type="button" data-voice="jaka" aria-pressed="false">
+              <svg class="glyph" viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="2.5" y="8.5" width="3.4" height="7" rx="1.7" />
+                <rect x="8.2" y="4.5" width="3.4" height="15" rx="1.7" />
+                <rect x="13.9" y="7" width="3.4" height="10" rx="1.7" />
+                <rect x="19.6" y="9.5" width="3.4" height="5" rx="1.7" />
+              </svg>
+              <span class="voice__meta">
+                <span class="voice__name">Jaka</span>
+                <span class="voice__tag">moški</span>
+              </span>
+            </button>
+          </div>
+
+          <div class="voices__track" aria-hidden="true">
+            <span class="voices__fill" id="voice-fill"></span>
+          </div>
+          <p class="voices__note" id="voice-note">Isti klic, štirje glasovi. Med poslušanjem lahko glas zamenjate.</p>
+        </div>
+
         <canvas class="wave" id="wave" aria-hidden="true"></canvas>
 
         <div class="script" id="script">
+          <!-- The second each line is spoken is not written here: it differs per
+               voice, so every recording carries its own cue list in VOICES below.
+               Line order in the DOM is the order of those cues. -->
+          <p class="script__line script__line--layra" data-who="layra">
+            <span class="script__who">Layra</span>
+            <span class="script__text">Jaz sem Layra. Oglasim se, ko se vi ne morete.</span>
+          </p>
           <p class="script__line script__line--caller" data-who="caller">
             <span class="script__who">Stranka</span>
             <span class="script__text">Dober dan … a imate jutri kaj prostega za striženje?</span>
@@ -1059,253 +1707,723 @@ button, input { font: inherit; color: inherit; }
           </p>
           <p class="script__line script__line--caller" data-who="caller">
             <span class="script__who">Stranka</span>
-            <span class="script__text">Ob dveh, prosim.</span>
+            <span class="script__text">Ob dveh, prosim. Ana Kovač.</span>
           </p>
           <p class="script__line script__line--layra" data-who="layra">
             <span class="script__who">Layra</span>
-            <span class="script__text">Zapisano — jutri ob 14.00. Se vidimo!</span>
+            <span class="script__text">Zapisala sem vas: jutri ob 14.00, striženje. Termin je rezerviran. Se vidimo!</span>
           </p>
 
           <p class="slip" id="slip">
             <svg class="icon icon--line" viewBox="0 0 24 24" aria-hidden="true">
               <path d="M5 12.5 10 17l9-10" />
             </svg>
-            <span>Nov termin · jutri ob 14.00
-              <small>Povzetek poslan vam na telefon.</small>
+            <span>Vpisano v koledar · jutri, 14.00 — Ana Kovač
+              <small>Vi ste medtem strigli. Obvestilo vas čaka na telefonu.</small>
             </span>
           </p>
         </div>
 
-        <figcaption class="call__note">Zapis je izmišljen primer — imena in termini niso resnični.</figcaption>
+        <figcaption class="call__note">
+          Izmišljen primer. Posnetek je narejen z Layrinimi glasovi, stranko igra
+          druga sintetična govorka — imena in termini niso resnični.
+        </figcaption>
       </figure>
 
     </section>
 
-    <section class="band" id="zakaj" aria-label="Zakaj Layra">
-      <p class="band__eyebrow" data-reveal>Zakaj Layra</p>
-      <h2 class="band__title" data-reveal style="--d:.06s">Pet razlogov, da mi lahko zaupate.</h2>
-      <p class="band__lede" data-reveal style="--d:.12s">
-        Nisem še en program, ki se ga boste morali naučiti. Sem glas,
-        ki dela namesto vas — in tole je vse, kar obljubim.
-      </p>
-
-      <div class="reasons">
-        <article class="reason" data-reveal>
-          <svg class="glyph" viewBox="0 0 24 24" aria-hidden="true">
-            <rect x="2.5" y="8.5" width="3.4" height="7" rx="1.7" />
-            <rect x="8.2" y="4.5" width="3.4" height="15" rx="1.7" />
-            <rect x="13.9" y="7" width="3.4" height="10" rx="1.7" />
-            <rect x="19.6" y="9.5" width="3.4" height="5" rx="1.7" />
-          </svg>
-          <h3 class="reason__claim">Govorim slovensko. Zares.</h3>
-          <p class="reason__body">Narečja, imena krajev, naglasi. Ne prevajam iz angleščine.</p>
-        </article>
-
-        <article class="reason" data-reveal style="--d:.06s">
-          <svg class="glyph" viewBox="0 0 24 24" aria-hidden="true">
-            <rect x="2.5" y="8.5" width="3.4" height="7" rx="1.7" />
-            <rect x="8.2" y="4.5" width="3.4" height="15" rx="1.7" />
-            <rect x="13.9" y="7" width="3.4" height="10" rx="1.7" />
-            <rect x="19.6" y="9.5" width="3.4" height="5" rx="1.7" />
-          </svg>
-          <h3 class="reason__claim">Nikoli ne zamudim klica.</h3>
-          <p class="reason__body">Ob polnih rokah, med vikendom, po zaprtju. Oglasim se v drugem zvonjenju.</p>
-        </article>
-
-        <article class="reason" data-reveal style="--d:.12s">
-          <svg class="glyph" viewBox="0 0 24 24" aria-hidden="true">
-            <rect x="2.5" y="8.5" width="3.4" height="7" rx="1.7" />
-            <rect x="8.2" y="4.5" width="3.4" height="15" rx="1.7" />
-            <rect x="13.9" y="7" width="3.4" height="10" rx="1.7" />
-            <rect x="19.6" y="9.5" width="3.4" height="5" rx="1.7" />
-          </svg>
-          <h3 class="reason__claim">Poslušam do konca.</h3>
-          <p class="reason__body">Ne prekinjam. Če me prekinete vi, takoj utihnem.</p>
-        </article>
-
-        <article class="reason" data-reveal style="--d:.18s">
-          <svg class="glyph" viewBox="0 0 24 24" aria-hidden="true">
-            <rect x="2.5" y="8.5" width="3.4" height="7" rx="1.7" />
-            <rect x="8.2" y="4.5" width="3.4" height="15" rx="1.7" />
-            <rect x="13.9" y="7" width="3.4" height="10" rx="1.7" />
-            <rect x="19.6" y="9.5" width="3.4" height="5" rx="1.7" />
-          </svg>
-          <h3 class="reason__claim">Vse si zapišem.</h3>
-          <p class="reason__body">Kdo je klical, kaj potrebuje in kdaj — povzetek dobite na telefon takoj po klicu.</p>
-        </article>
-
-        <article class="reason" data-reveal style="--d:.24s">
-          <svg class="glyph" viewBox="0 0 24 24" aria-hidden="true">
-            <rect x="2.5" y="8.5" width="3.4" height="7" rx="1.7" />
-            <rect x="8.2" y="4.5" width="3.4" height="15" rx="1.7" />
-            <rect x="13.9" y="7" width="3.4" height="10" rx="1.7" />
-            <rect x="19.6" y="9.5" width="3.4" height="5" rx="1.7" />
-          </svg>
-          <h3 class="reason__claim">Ne zahtevam ničesar.</h3>
-          <p class="reason__body">Brez namestitve, brez nove opreme, brez vezave. Odpoveste lahko kadarkoli.</p>
-        </article>
+    <!-- ============================================================
+         THE ANSWER STRIP — price, booking, systems, setup.
+         The four things a visitor used to leave without knowing.
+         ============================================================ -->
+    <section class="facts" aria-label="Na kratko">
+      <div class="facts__grid" data-reveal>
+        <div class="fact">
+          <p class="fact__q">Koliko stane</p>
+          <p class="fact__a">V pilotu 0 €
+            <small>Prvi trije saloni. Brez vezave.</small>
+          </p>
+        </div>
+        <div class="fact">
+          <p class="fact__q">Ali res rezervira</p>
+          <p class="fact__a">Da, termin vpiše sama
+            <small>Ne le zapiše sporočila.</small>
+          </p>
+        </div>
+        <div class="fact">
+          <p class="fact__q">S čim deluje</p>
+          <p class="fact__a">Svoj koledar ali Google Koledar
+            <small>Tudi Fresha — prek Googlovega koledarja.</small>
+          </p>
+        </div>
+        <div class="fact">
+          <p class="fact__q">Kaj potrebujete</p>
+          <p class="fact__a">Preusmeritev številke
+            <small>Brez nove opreme, nekaj minut.</small>
+          </p>
+        </div>
       </div>
     </section>
 
+    <!-- ============================================================
+         PROBLEM — first "točno to se meni dogaja", šele potem Layra.
+         ============================================================ -->
+    <section class="band" id="problem" aria-label="Problem">
+      <div class="band__head--split">
+        <div>
+          <p class="band__eyebrow" data-reveal>Problem</p>
+          <h2 class="band__title" data-reveal style="--d:.06s">
+            Koliko klicev izgubite, ko imate polne roke?
+          </h2>
+          <p class="beat" data-reveal style="--d:.12s">
+            <span>Strižete. Fenate. Barvate.</span>
+            <span>Telefon zvoni.</span>
+            <span class="beat--soft">Roke so mokre, stranka sedi pred vami. Dvigniti ne morete.</span>
+            <span class="beat--soft">Sporočila ne pusti nihče. Pokliče naslednji salon.</span>
+          </p>
+        </div>
+
+        <!-- the visitor's own numbers; no borrowed statistics anywhere -->
+        <form class="calc" id="calc" data-reveal style="--d:.18s" novalidate>
+          <p class="calc__title">Izračun na vaših številkah</p>
+
+          <label class="calc__row">
+            <span class="calc__top">
+              Zamujeni klici na teden
+              <span class="calc__val" id="out-calls">8</span>
+            </span>
+            <input type="range" id="calls" min="1" max="30" step="1" value="8">
+          </label>
+
+          <label class="calc__row">
+            <span class="calc__top">
+              Povprečna storitev
+              <span class="calc__val" id="out-price">35 €</span>
+            </span>
+            <input type="range" id="price" min="10" max="150" step="5" value="35">
+          </label>
+
+          <p class="calc__out" role="status">
+            <span class="calc__num" id="calc-num">≈ 600 €</span>
+            <span class="calc__cap">na mesec, ki jih nihče ne zaračuna</span>
+          </p>
+          <p class="calc__note">
+            Računamo previdno: samo polovica zamujenih klicev je stranka, ki bi res
+            prišla. Druga polovica so ponudniki, napačne številke in radovedneži.
+            Vaše številke, ne naša statistika.
+          </p>
+        </form>
+      </div>
+
+      <div class="chain" data-reveal style="--d:.24s" role="list" aria-label="Kaj sledi zamujenemu klicu">
+        <div class="chain__link" role="listitem">
+          <span class="chain__no">01</span>
+          <span class="chain__what">Zamujen klic</span>
+          <span class="chain__why">Telefon zvoni, ko delate.</span>
+        </div>
+        <span class="chain__arrow" aria-hidden="true">→</span>
+        <div class="chain__link" role="listitem">
+          <span class="chain__no">02</span>
+          <span class="chain__what">Izgubljena stranka</span>
+          <span class="chain__why">Ne pokliče drugič, pokliče drugam.</span>
+        </div>
+        <span class="chain__arrow" aria-hidden="true">→</span>
+        <div class="chain__link" role="listitem">
+          <span class="chain__no">03</span>
+          <span class="chain__what">Izgubljen termin</span>
+          <span class="chain__why">Stol ostane prazen.</span>
+        </div>
+        <span class="chain__arrow" aria-hidden="true">→</span>
+        <div class="chain__link chain__link--end" role="listitem">
+          <span class="chain__no">04</span>
+          <span class="chain__what">Izgubljen denar</span>
+          <span class="chain__why">In naslednjič gre spet k njim.</span>
+        </div>
+      </div>
+
+      <p class="chain__fix" data-reveal style="--d:.3s">
+        Layra to prekine <span>pri prvem členu</span>.
+      </p>
+    </section>
+
+    <!-- ============================================================
+         SOLUTION — and the step that makes it more than a receptionist:
+         she books. Said in the steps, shown on the calendar, and
+         contrasted against the message-taking competition below.
+         ============================================================ -->
     <section class="band" id="kako-deluje" aria-label="Kako deluje">
       <p class="band__eyebrow" data-reveal>Kako deluje</p>
-      <h2 class="band__title" data-reveal style="--d:.06s">Trije koraki. Nič opreme, nič učenja.</h2>
+      <h2 class="band__title" data-reveal style="--d:.06s">
+        Stranka pokliče. Layra se dogovori. Termin je v koledarju.
+      </h2>
+      <p class="band__lede" data-reveal style="--d:.12s">
+        Razlika do vseh ostalih je en sam korak — tretji. Ostali vam zapišejo
+        sporočilo in vi kličete nazaj. Layra opravi tudi to.
+      </p>
 
-      <div class="steps">
-        <div class="step" data-reveal>
-          <span class="step__no">01</span>
-          <h3 class="step__claim">Preusmerite klice</h3>
-          <p class="step__body">Zamujene klice preusmerite na mojo številko. Ureditev vzame nekaj minut.</p>
-        </div>
-        <div class="step" data-reveal style="--d:.08s">
-          <span class="step__no">02</span>
-          <h3 class="step__claim">Jaz se oglasim</h3>
-          <p class="step__body">Predstavim se, poslušam in se s stranko dogovorim, kaj potrebuje.</p>
-        </div>
-        <div class="step" data-reveal style="--d:.16s">
-          <span class="step__no">03</span>
-          <h3 class="step__claim">Vi dobite povzetek</h3>
-          <p class="step__body">Takoj po klicu vam pošljem, kdo je klical in kaj ste se dogovorili.</p>
-        </div>
-      </div>
-    </section>
+      <div class="how">
+        <div class="flow" data-reveal style="--d:.16s">
+          <div class="stepx">
+            <span class="stepx__dot">01</span>
+            <h3 class="stepx__claim">Preusmerite klice</h3>
+            <p class="stepx__body">
+              Pri operaterju vklopite preusmeritev zasedenih in neodgovorjenih
+              klicev na Layrino številko. Nekaj minut, brez nove opreme, vaša
+              številka ostane vaša.
+            </p>
+          </div>
 
-    <section class="band" aria-label="Kaj dobite po klicu">
-      <div class="proof">
-        <div>
-          <p class="band__eyebrow" data-reveal>Po klicu</p>
-          <h2 class="band__title" data-reveal style="--d:.06s">Vi vidite samo to.</h2>
-          <p class="band__lede" data-reveal style="--d:.12s">
-            Nobene aplikacije za odpiranje, nobenega urnika za
-            pregledovanje. Samo kratko sporočilo, ki pove vse —
-            in številko, na katero lahko pokličete nazaj.
-          </p>
+          <div class="stepx">
+            <span class="stepx__dot">02</span>
+            <h3 class="stepx__claim">Layra se oglasi in posluša</h3>
+            <p class="stepx__body">
+              Predstavi se z imenom, počaka, da stranka pove do konca, in
+              vpraša, kaj potrebuje in kdaj bi ji ustrezalo.
+            </p>
+          </div>
 
-          <div class="trust">
-            <span class="trust__item" data-reveal style="--d:.18s">
-              <svg class="icon icon--line" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M5 12.5 10 17l9-10" />
-              </svg>
-              Brez namestitve
-            </span>
-            <span class="trust__item" data-reveal style="--d:.24s">
-              <svg class="icon icon--line" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M5 12.5 10 17l9-10" />
-              </svg>
-              Brez tehničnega znanja
-            </span>
-            <span class="trust__item" data-reveal style="--d:.30s">
-              <svg class="icon icon--line" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M5 12.5 10 17l9-10" />
-              </svg>
-              Odpoveste kadarkoli
-            </span>
+          <div class="stepx stepx--key">
+            <span class="stepx__dot">03</span>
+            <h3 class="stepx__claim">Termin vpiše v koledar</h3>
+            <p class="stepx__body">
+              Pogleda, kaj je zares prosto, ponudi uro in jo zaklene. Če termina
+              ne more zakleniti, ga tudi ne potrdi — nikoli ne obljubi ure, ki je
+              ni dobila.
+            </p>
+          </div>
+
+          <div class="stepx">
+            <span class="stepx__dot">04</span>
+            <h3 class="stepx__claim">Vi dobite obvestilo</h3>
+            <p class="stepx__body">
+              Kdo je klical, za katero storitev in kdaj pride. Posnetek in prepis
+              klica ostaneta shranjena, če bi kdaj hoteli preveriti dogovor.
+            </p>
           </div>
         </div>
 
-        <div class="proof__card">
-          <div class="msg" data-reveal style="--d:.1s">
-            <div class="msg__head">
-              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-                <path
-                  d="M6.6 3.5 9 8.2l-2 1.7a12 12 0 0 0 5.4 5.4l1.7-2 4.7 2.4a1.6 1.6 0 0 1 .8 1.8l-.4 1.7a2 2 0 0 1-2.2 1.5C10.3 20 4 13.7 3.2 6.5A2 2 0 0 1 4.7 4.3l1.7-.4a1.6 1.6 0 0 1 1.8.8Z" />
+        <!-- one composite visual: the calendar writes the slot, the phone lights up -->
+        <div class="stage" id="stage" data-reveal style="--d:.2s">
+          <div class="cal">
+            <div class="cal__bar">
+              <svg class="icon icon--line" viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="3.5" y="5" width="17" height="15.5" rx="2.5" />
+                <path d="M3.5 9.5h17M8 3.2v3.4M16 3.2v3.4" />
               </svg>
-              Zamujen klic · 14:32
+              Vaš koledar
+              <span class="cal__day">torek, 12. 8.</span>
             </div>
-            <p class="msg__from">Manca K.</p>
-            <p class="msg__body">»Rada bi termin za barvanje, v petek popoldan, če je prostor.«</p>
-            <p class="msg__foot">Poslano vam na telefon, takoj po klicu.</p>
+            <div class="cal__grid">
+              <div class="cal__slot">
+                <span class="cal__time">12.30</span>
+                <span class="cal__fill">Barvanje — Nina P.</span>
+              </div>
+              <div class="cal__slot">
+                <span class="cal__time">13.15</span>
+                <span class="cal__fill cal__fill--free">prosto</span>
+              </div>
+              <div class="cal__slot cal__slot--new">
+                <span class="cal__time">14.00</span>
+                <span class="cal__fill">Striženje — Ana Kovač
+                  <small class="cal__tag">rezervirala Layra, 13.42</small>
+                </span>
+              </div>
+              <div class="cal__slot">
+                <span class="cal__time">15.00</span>
+                <span class="cal__fill">Fen — Marko S.</span>
+              </div>
+              <div class="cal__slot">
+                <span class="cal__time">16.30</span>
+                <span class="cal__fill cal__fill--free">prosto</span>
+              </div>
+            </div>
           </div>
-          <p class="proof__note" data-reveal style="--d:.16s">Izmišljen primer — brez podatkov resnične stranke.</p>
+
+          <!-- TODO: SMS pošiljanje še ni priklopljeno (PLAN.md §5). Do takrat
+               obvestilo pomeni zapis v nadzorni plošči; besedilo spodaj je
+               nalašč napisano kot "obvestilo", ne kot "SMS". -->
+          <div class="phone" aria-label="Obvestilo na vašem telefonu">
+            <div class="phone__notch" aria-hidden="true"></div>
+            <div class="phone__screen">
+              <div class="push">
+                <p class="push__head">
+                  <svg class="glyph" viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="2.5" y="8.5" width="3.4" height="7" rx="1.7" />
+                    <rect x="8.2" y="4.5" width="3.4" height="15" rx="1.7" />
+                    <rect x="13.9" y="7" width="3.4" height="10" rx="1.7" />
+                    <rect x="19.6" y="9.5" width="3.4" height="5" rx="1.7" />
+                  </svg>
+                  Layra
+                </p>
+                <p class="push__title">Nov termin · jutri 14.00</p>
+                <p class="push__body">Ana Kovač — striženje. Klicala med vašim delom, termin je potrjen.</p>
+                <p class="push__time">13.42 · prepis klica na voljo</p>
+              </div>
+            </div>
+          </div>
+
+          <p class="stage__note">Izmišljen primer — brez podatkov resnične stranke.</p>
+        </div>
+      </div>
+
+      <div class="versus">
+        <div class="vs vs--them" data-reveal>
+          <p class="vs__label">Navadna AI tajnica</p>
+          <h3 class="vs__title">Zapiše sporočilo</h3>
+          <p class="vs__path">
+            <span class="vs__node">Stranka pokliče</span>
+            <span class="vs__sep" aria-hidden="true">→</span>
+            <span class="vs__node">posluša</span>
+            <span class="vs__sep" aria-hidden="true">→</span>
+            <span class="vs__node vs__node--cost">vi kličete nazaj</span>
+            <span class="vs__sep" aria-hidden="true">→</span>
+            <span class="vs__node">termin (mogoče)</span>
+          </p>
+          <p class="vs__foot">
+            Delo ostane vaše, samo prestavljeno na zvečer. Stranka je do takrat
+            pogosto že drugje.
+          </p>
+        </div>
+
+        <div class="vs vs--us" data-reveal style="--d:.08s">
+          <p class="vs__label">Layra</p>
+          <h3 class="vs__title">Rezervira termin</h3>
+          <p class="vs__path">
+            <span class="vs__node">Stranka pokliče</span>
+            <span class="vs__sep" aria-hidden="true">→</span>
+            <span class="vs__node">se dogovori</span>
+            <span class="vs__sep" aria-hidden="true">→</span>
+            <span class="vs__node vs__node--hit">termin je vpisan</span>
+            <span class="vs__sep" aria-hidden="true">→</span>
+            <span class="vs__node">vi dobite obvestilo</span>
+          </p>
+          <p class="vs__foot">
+            Stranka odloži slušalko s terminom, ne z obljubo. Vam ne ostane
+            nobenega klica za nazaj.
+          </p>
         </div>
       </div>
     </section>
 
+    <!-- ============================================================
+         RESULT — five claims, in the order that matters:
+         three results, then a feature, then convenience.
+         ============================================================ -->
+    <section class="band" id="rezultat" aria-label="Kaj dobite">
+      <p class="band__eyebrow" data-reveal>Rezultat</p>
+      <h2 class="band__title" data-reveal style="--d:.06s">To je rezultat, ki ga dobite.</h2>
+
+      <div class="results">
+        <article class="result" data-reveal>
+          <svg class="glyph" viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="2.5" y="8.5" width="3.4" height="7" rx="1.7" />
+            <rect x="8.2" y="4.5" width="3.4" height="15" rx="1.7" />
+            <rect x="13.9" y="7" width="3.4" height="10" rx="1.7" />
+            <rect x="19.6" y="9.5" width="3.4" height="5" rx="1.7" />
+          </svg>
+          <h3 class="result__claim">Ne izgubljate več klicev</h3>
+          <p class="result__body">
+            Layra se oglasi v drugem zvonjenju — med delom, po zaprtju, ob
+            vikendih in praznikih. Nihče ne posluša zasedenega tona.
+          </p>
+        </article>
+
+        <article class="result" data-reveal style="--d:.06s">
+          <svg class="glyph" viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="2.5" y="8.5" width="3.4" height="7" rx="1.7" />
+            <rect x="8.2" y="4.5" width="3.4" height="15" rx="1.7" />
+            <rect x="13.9" y="7" width="3.4" height="10" rx="1.7" />
+            <rect x="19.6" y="9.5" width="3.4" height="5" rx="1.7" />
+          </svg>
+          <h3 class="result__claim">Stranke rezervirajo tudi, ko ste zasedeni</h3>
+          <p class="result__body">
+            Termin dobijo med pogovorom, ne šele, ko jih zvečer pokličete nazaj.
+            Do takrat je polovica že drugje.
+          </p>
+        </article>
+
+        <article class="result" data-reveal style="--d:.12s">
+          <svg class="glyph" viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="2.5" y="8.5" width="3.4" height="7" rx="1.7" />
+            <rect x="8.2" y="4.5" width="3.4" height="15" rx="1.7" />
+            <rect x="13.9" y="7" width="3.4" height="10" rx="1.7" />
+            <rect x="19.6" y="9.5" width="3.4" height="5" rx="1.7" />
+          </svg>
+          <h3 class="result__claim">Takoj veste, kdo je klical</h3>
+          <p class="result__body">
+            Ime, storitev, ura in številka — takoj po klicu. Brez poslušanja
+            sporočil in brez ugibanja iz neznanih številk.
+          </p>
+        </article>
+
+        <article class="result" data-reveal style="--d:.18s">
+          <svg class="glyph" viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="2.5" y="8.5" width="3.4" height="7" rx="1.7" />
+            <rect x="8.2" y="4.5" width="3.4" height="15" rx="1.7" />
+            <rect x="13.9" y="7" width="3.4" height="10" rx="1.7" />
+            <rect x="19.6" y="9.5" width="3.4" height="5" rx="1.7" />
+          </svg>
+          <h3 class="result__claim">Govori naravno slovensko</h3>
+          <p class="result__body">
+            Ne prevaja iz angleščine. Razume domača imena storitev, kraje in
+            ljudi, ki povedo pol stavka in se premislijo.
+          </p>
+        </article>
+
+        <article class="result" data-reveal style="--d:.24s">
+          <svg class="glyph" viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="2.5" y="8.5" width="3.4" height="7" rx="1.7" />
+            <rect x="8.2" y="4.5" width="3.4" height="15" rx="1.7" />
+            <rect x="13.9" y="7" width="3.4" height="10" rx="1.7" />
+            <rect x="19.6" y="9.5" width="3.4" height="5" rx="1.7" />
+          </svg>
+          <h3 class="result__claim">Brez nove opreme in brez vezave</h3>
+          <p class="result__body">
+            Isti telefon, ista številka, nobene aplikacije za osebje. Preusmeritev
+            vklopite v nekaj minutah in izklopite, kadar hočete.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         TRUST — the part that has no social proof yet, so it says so.
+         An honest "we are new" beats a fabricated testimonial, and it
+         is the only version of this section we can defend.
+         ============================================================ -->
+    <section class="band" id="zaupanje" aria-label="Zaupanje">
+      <p class="band__eyebrow" data-reveal>Odkrito</p>
+      <h2 class="band__title" data-reveal style="--d:.06s">Layra je nova. Tega ne skrivamo.</h2>
+      <p class="band__lede" data-reveal style="--d:.12s">
+        Nimamo dvajsetih logotipov in izmišljenih odstotkov. Imamo pilot, delujoč
+        produkt in telefonsko številko, na kateri lahko Layro preizkusite sami —
+        preden karkoli podpišete ali plačate.
+      </p>
+
+      <div class="honest">
+        <div class="hon" data-reveal>
+          <p class="hon__head">
+            <svg class="icon icon--line" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 12.5 10 17l9-10" />
+            </svg>
+            Pilot teče zdaj
+          </p>
+          <p class="hon__body">
+            Prvi trije saloni Layro testirajo brezplačno, ves čas pilota. V zameno
+            prosimo samo za iskreno mnenje — in za dovoljenje, da vaše izkušnje
+            kasneje omenimo, če boste zadovoljni.
+          </p>
+        </div>
+
+        <div class="hon" data-reveal style="--d:.06s">
+          <p class="hon__head">
+            <svg class="icon icon--line icon--warn" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 8v5M12 16.2v.1" />
+              <circle cx="12" cy="12" r="8.5" />
+            </svg>
+            Ocen strank še nimamo
+          </p>
+          <p class="hon__body">
+            Ker bi bile izmišljene. Namesto priporočila vam ponudimo boljši dokaz:
+            pokličite Layro in ji zastavite vprašanje, ki vas skrbi. Deset
+            sekund pove več kot deset zvezdic.
+          </p>
+        </div>
+
+        <div class="hon" data-reveal style="--d:.12s">
+          <p class="hon__head">
+            <svg class="icon icon--line icon--warn" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 8v5M12 16.2v.1" />
+              <circle cx="12" cy="12" r="8.5" />
+            </svg>
+            Česa še ne zna
+          </p>
+          <p class="hon__body">
+            Klica zaenkrat ne preveže na vas — zapiše si ga in vas takoj obvesti. Pri
+            storitvah, kjer trajanja ni mogoče uganiti (barvanja, preoblikovanja),
+            ne ugiba: ponudi brezplačen posvet.
+          </p>
+        </div>
+
+        <div class="hon" data-reveal style="--d:.18s">
+          <p class="hon__head">
+            <svg class="icon icon--line" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 3.2 19 6v5.9c0 4.2-2.8 7.6-7 8.9-4.2-1.3-7-4.7-7-8.9V6z" />
+              <path d="m8.9 12.1 2.1 2.1 4.1-4.1" />
+            </svg>
+            Vaši podatki
+          </p>
+          <p class="hon__body">
+            Klici in prepisi se hranijo za vas — da lahko preverite dogovor.
+            Dostop imate vi, izbrišemo jih na zahtevo, nikomur jih ne prodajamo.
+            Stranki na začetku klica povemo, da se pogovor snema.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         PRICE — the question every visitor reaches and nobody answered.
+         TODO: ko bo cena po pilotu določena, jo vpiši v .plan__price
+         spodaj in izbriši opozorilo v .plan__sub.
+         ============================================================ -->
+    <section class="band" id="cena" aria-label="Cena">
+      <p class="band__eyebrow" data-reveal>Cena</p>
+      <h2 class="band__title" data-reveal style="--d:.06s">Med pilotom nič. Potem se dogovorimo vnaprej.</h2>
+      <p class="band__lede" data-reveal style="--d:.12s">
+        Brez priklopnine, brez vezave in brez samodejnega obračuna. Če se ne
+        dogovorimo, Layro izklopimo in računa ni.
+      </p>
+
+      <div class="plans">
+        <div class="plan plan--now" data-reveal>
+          <p class="plan__label">Pilot · zdaj</p>
+          <p class="plan__price">0 € <small>/ mesec</small></p>
+          <p class="plan__sub">Za prve tri salone, ves čas pilota.</p>
+          <ul class="plan__list">
+            <li>
+              <svg class="icon icon--line" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 10 17l9-10" /></svg>
+              Neomejeno klicev in rezervacij
+            </li>
+            <li>
+              <svg class="icon icon--line" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 10 17l9-10" /></svg>
+              Nastavitev opravimo mi, z vami po telefonu
+            </li>
+            <li>
+              <svg class="icon icon--line" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 10 17l9-10" /></svg>
+              Storitve, cene in urnik prilagodimo vašemu salonu
+            </li>
+            <li>
+              <svg class="icon icon--line" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 10 17l9-10" /></svg>
+              Odpoved kadarkoli, brez odpovednega roka
+            </li>
+          </ul>
+          <p class="plan__foot">Ne zahtevamo kartice. Ni česa preklicati.</p>
+        </div>
+
+        <div class="plan" data-reveal style="--d:.08s">
+          <p class="plan__label">Po pilotu</p>
+          <!-- TODO: vpiši dogovorjeno mesečno ceno, npr. „39 € <small>/ mesec</small>“ -->
+          <p class="plan__price">Fiksna mesečna cena</p>
+          <p class="plan__sub">
+            Ceno vam povemo, preden se pilot konča. Pilotni saloni jo obdržijo
+            zaklenjeno prvo leto.
+          </p>
+          <ul class="plan__list">
+            <li>
+              <svg class="icon icon--line" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 10 17l9-10" /></svg>
+              Ena cena na mesec, brez plačevanja po minutah
+            </li>
+            <li>
+              <svg class="icon icon--line" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 10 17l9-10" /></svg>
+              Brez priklopnine in brez stroškov nastavitve
+            </li>
+            <li>
+              <svg class="icon icon--line" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 10 17l9-10" /></svg>
+              Nič se ne obračuna samodejno — najprej vprašamo
+            </li>
+            <li>
+              <svg class="icon icon--line" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 10 17l9-10" /></svg>
+              Če ne pristanete, ni računa in Layro izklopimo
+            </li>
+          </ul>
+          <p class="plan__foot">
+            En zamujen klic na teden pri povprečni storitvi je že več, kot bo
+            Layra kdaj stala. Izračun je zgoraj — na vaših številkah.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         FAQ — the original five, plus the six purchase objections
+         that were sending people away without asking.
+         ============================================================ -->
     <section class="band" id="vprasanja" aria-label="Pogosta vprašanja">
       <p class="band__eyebrow" data-reveal>Pogosta vprašanja</p>
-      <h2 class="band__title" data-reveal style="--d:.06s">Kar bi vprašali, preden mi zaupate telefon.</h2>
+      <h2 class="band__title" data-reveal style="--d:.06s">Kar bi vprašali, preden ji zaupate telefon.</h2>
 
       <div class="faq" data-reveal style="--d:.12s">
-        <details>
-          <summary>
-            Kaj se zgodi, če Layra ne zna odgovoriti?
-            <svg class="icon icon--line" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 5v14M5 12h14" />
-            </svg>
-          </summary>
-          <p class="faq__body">
-            Povem po pravici, da bom preverila, vprašanje si zapišem in
-            vam ga takoj posredujem. Ničesar si ne izmišljujem.
-          </p>
-        </details>
-        <details>
-          <summary>
-            Ali stranke vedo, da govorijo z njo?
-            <svg class="icon icon--line" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 5v14M5 12h14" />
-            </svg>
-          </summary>
-          <p class="faq__body">
-            Da. Predstavim se s svojim imenom in ne skrivam, kaj sem.
-            Stranke večinoma preprosto povedo, kar potrebujejo.
-          </p>
-        </details>
-        <details>
-          <summary>
-            Kaj potrebujem za začetek?
-            <svg class="icon icon--line" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 5v14M5 12h14" />
-            </svg>
-          </summary>
-          <p class="faq__body">
-            Samo preusmeritev številke — brez nove opreme, brez posegov
-            v vaš telefon in brez tehničnega znanja.
-          </p>
-        </details>
-        <details>
-          <summary>
-            Me veže pogodba?
-            <svg class="icon icon--line" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 5v14M5 12h14" />
-            </svg>
-          </summary>
-          <p class="faq__body">
-            Ne. Odpoveste me lahko kadarkoli, brez odpovednega roka.
-          </p>
-        </details>
-        <details>
-          <summary>
-            Kako zveni — kot robot?
-            <svg class="icon icon--line" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 5v14M5 12h14" />
-            </svg>
-          </summary>
-          <p class="faq__body">
-            Najlažje preverite sami: pustite številko zgoraj in pokličem
-            vas. Klic je brezplačen.
-          </p>
-        </details>
+
+        <div class="faq__col">
+          <p class="faq__group">Delo in rezervacije</p>
+
+          <details>
+            <summary>
+              Ali Layra lahko rezervira termin v mojem urniku?
+              <svg class="icon icon--line" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+            </summary>
+            <p class="faq__body">
+              Da — to je bistvo. Med klicem pogleda, kaj je prosto, ponudi uro in jo
+              zaklene, tako da je isti termin ne more dobiti še nekdo drug. Če termina
+              iz kateregakoli razloga ne more zakleniti, ga ne potrdi; raje pove, da
+              boste potrdili vi.
+            </p>
+          </details>
+
+          <details>
+            <summary>
+              S katerim sistemom za rezervacije deluje?
+              <svg class="icon icon--line" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+            </summary>
+            <p class="faq__body">
+              Layra ima svoj koledar, ki ga lahko uporabljate takoj, brez selitve
+              podatkov. Če želite, termine hkrati vpisuje v vaš Google Koledar — in s
+              tem tudi v sisteme, ki Google Koledar berejo (na primer Fresha). Za druge
+              sisteme nam pišite; povemo iskreno, ali se da ali ne.
+            </p>
+          </details>
+
+          <details>
+            <summary>
+              Kaj, če stranka zahteva nekaj, česar Layra ne zna?
+              <svg class="icon icon--line" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+            </summary>
+            <p class="faq__body">
+              Pove po pravici, da bo preverila, vprašanje si zapiše in vam ga takoj
+              posreduje. Ničesar si ne izmišljuje in ne obljublja cene ali termina, ki
+              ga ni preverila. Pri storitvah brez znanega trajanja ponudi brezplačen
+              posvet namesto ugibanja.
+            </p>
+          </details>
+
+          <details>
+            <summary>
+              Ali lahko Layra preusmeri klic name?
+              <svg class="icon icon--line" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+            </summary>
+            <p class="faq__body">
+              Zaenkrat ne — in tega nočemo olepševati. Če stranka nujno želi vas, si
+              Layra zapiše številko in razlog ter vas obvesti takoj po klicu.
+              Prevezovanje je naslednje na vrsti; če ga potrebujete, nam povejte, da
+              vemo, kako pomembno je.
+            </p>
+          </details>
+
+          <details>
+            <summary>
+              Kaj potrebujem za začetek?
+              <svg class="icon icon--line" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+            </summary>
+            <p class="faq__body">
+              Preusmeritev številke in pol ure vašega časa, da skupaj vpišemo storitve,
+              trajanja in delovni čas. Brez nove opreme, brez posegov v vaš telefon in
+              brez aplikacije za osebje.
+            </p>
+          </details>
+
+          <details>
+            <summary>
+              Kako zveni — kot robot?
+              <svg class="icon icon--line" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+            </summary>
+            <p class="faq__body">
+              Presodite sami: posnetek klica je na vrhu strani, lahko pa pustite
+              številko in Layra pokliče vas. Govori umirjeno, ne hiti in ne prekinja.
+              Robot ni, čudež tudi ne.
+            </p>
+          </details>
+        </div>
+
+        <div class="faq__col">
+          <p class="faq__group">Zaupanje, podatki, denar</p>
+
+          <details>
+            <summary>
+              Ali stranke vedo, da govorijo z računalnikom?
+              <svg class="icon icon--line" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+            </summary>
+            <p class="faq__body">
+              Da. Layra se predstavi z imenom in ne skriva, kaj je. Izkušnja je, da
+              stranke preprosto povedo, kaj potrebujejo — dokler jih nekdo posluša in
+              jim res rezervira termin.
+            </p>
+          </details>
+
+          <details>
+            <summary>
+              Ali se klici snemajo?
+              <svg class="icon icon--line" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+            </summary>
+            <p class="faq__body">
+              Da — posnetek in prepis se shranita, da lahko kadarkoli preverite, kaj je
+              bilo dogovorjeno. Stranki to povemo na začetku klica. Posnetki so vaši:
+              dostopate do njih vi, na zahtevo jih izbrišemo.
+            </p>
+          </details>
+
+          <details>
+            <summary>
+              Kaj se zgodi z mojimi podatki?
+              <svg class="icon icon--line" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+            </summary>
+            <p class="faq__body">
+              Uporabljamo jih samo za to, da Layra dela za vaš salon. Ne prodajamo jih,
+              ne posojamo oglaševalcem in jih ne uporabljamo za nič drugega. Ob odhodu
+              vam podatke izvozimo in izbrišemo.
+            </p>
+          </details>
+
+          <details>
+            <summary>
+              Kaj se zgodi, če se zmoti?
+              <svg class="icon icon--line" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+            </summary>
+            <p class="faq__body">
+              Sistem je narejen tako, da se v dvomu raje ne zgodi nič: dvojnega termina
+              ne more vpisati, zasedene ure ne ponudi, in kar ni mogla zakleniti, ne
+              potrdi. Če se kljub temu kaj zalomi, imate posnetek in prepis — in nas na
+              telefonu.
+            </p>
+          </details>
+
+          <details>
+            <summary>
+              Me veže pogodba?
+              <svg class="icon icon--line" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+            </summary>
+            <p class="faq__body">
+              Ne. Med pilotom ni ne pogodbe ne kartice, kasneje pa ni vezave in ni
+              odpovednega roka. Preusmeritev izklopite v minuti in vaša številka zvoni
+              spet pri vas.
+            </p>
+          </details>
+
+          <details>
+            <summary>
+              Koliko salonov jo že uporablja?
+              <svg class="icon icon--line" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+            </summary>
+            <p class="faq__body">
+              Malo — pilot se je pravkar začel, in raje to povemo, kot da si izmislimo
+              številko. Zato je zdaj brezplačna, zato lahko odpoveste kadarkoli in zato
+              se z vsakim salonom ukvarjamo osebno.
+            </p>
+          </details>
+        </div>
+
       </div>
     </section>
 
     <section class="finale" aria-label="Povabilo">
       <div class="finale__panel" data-reveal>
-        <h2 class="finale__title">Najlažje je, da me enkrat slišite.</h2>
+        <h2 class="finale__title">Preizkusite Layro tako, kot jo bo slišala vaša stranka.</h2>
         <p class="finale__lede">
-          Pustite številko in pokličem vas — brezplačno in brez
-          obveznosti. Ali pa me pokličite kar sami.
+          Pustite številko in Layra pokliče vas. Vprašajte jo za termin, zmedite
+          jo, prekinite jo sredi stavka — potem se odločite.
         </p>
         <div class="finale__actions">
-          <!-- TODO: zamenjaj z Layrino pravo telefonsko številko. -->
-          <a class="btn-solid" href="tel:+386XXXXXXXX">
+          <button class="btn-solid" type="button" data-try>
             <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
               <path
                 d="M6.6 3.5 9 8.2l-2 1.7a12 12 0 0 0 5.4 5.4l1.7-2 4.7 2.4a1.6 1.6 0 0 1 .8 1.8l-.4 1.7a2 2 0 0 1-2.2 1.5C10.3 20 4 13.7 3.2 6.5A2 2 0 0 1 4.7 4.3l1.7-.4a1.6 1.6 0 0 1 1.8.8Z" />
             </svg>
-            Pokliči Layro
-          </a>
-          <button class="btn-ghost" id="finale-leave" type="button">Raje pustim številko</button>
+            Preizkusite brezplačno
+          </button>
+          <!-- TODO: zamenjaj z Layrino pravo telefonsko številko. -->
+          <a class="btn-ghost" href="tel:+386XXXXXXXX">Ali pokličite 0X XXX XX XX</a>
         </div>
+        <p class="finale__fine">Brezplačno · brez kartice · brez vezave · pilot za prve tri salone</p>
       </div>
     </section>
 
@@ -1323,33 +2441,62 @@ button, input { font: inherit; color: inherit; }
           </svg>
           LAYRA
         </p>
-        <p class="foot__tag">Glas, ki se oglasi, ko se vi ne morete.</p>
+        <p class="foot__tag">Glasovna pomočnica, ki se oglasi in rezervira termin.</p>
       </div>
       <div class="foot__links">
         <a id="foot-login" href="#prijava">Prijava</a>
         <!-- TODO: zamenjaj z Layrino pravo telefonsko številko. -->
-        <a href="tel:+386XXXXXXXX">Pokliči Layro</a>
+        <a href="tel:+386XXXXXXXX">Pokličite Layro</a>
         <span>© 2026 Layra</span>
       </div>
     </div>
   </footer>
 
+  <!-- the CTA that follows you down the page, phones only -->
+  <div class="dock" aria-hidden="false">
+    <div class="dock__row">
+      <button class="dock__try" type="button" data-try>Preizkusite Layro</button>
+      <!-- TODO: zamenjaj z Layrino pravo telefonsko številko. -->
+      <a class="dock__call" href="tel:+386XXXXXXXX">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            d="M6.6 3.5 9 8.2l-2 1.7a12 12 0 0 0 5.4 5.4l1.7-2 4.7 2.4a1.6 1.6 0 0 1 .8 1.8l-.4 1.7a2 2 0 0 1-2.2 1.5C10.3 20 4 13.7 3.2 6.5A2 2 0 0 1 4.7 4.3l1.7-.4a1.6 1.6 0 0 1 1.8.8Z" />
+        </svg>
+        Pokliči
+      </a>
+    </div>
+  </div>
+
   <script>
-/* LAYRA — landing page behaviour.
-   No build step, no dependencies. Runs deferred, after the DOM is parsed. */
+/* LAYRA — landing behaviour, predlog 02.
+   No build step, no dependencies. Runs after the DOM is parsed. */
+
+/* The four voices, and the recording of the demo call in each.
+ *
+ * `soniox` is the voice the backend actually asks Soniox for (src/config.js,
+ * VOICE=…); the Slovene name is what a salon owner chooses between. The files
+ * ship with the page — generated once with Soniox TTS, not synthesised at
+ * runtime — so choosing a voice is audible immediately, offline and from disk.
+ *
+ * `cues[i]` is the second at which line i of #script is spoken in that file.
+ * The lists differ because the voices differ in pace; they were measured when
+ * the audio was assembled, not estimated. Regenerating the audio means
+ * regenerating these. */
+const VOICES = [
+  { id: 'nina',  name: 'Nina',  soniox: 'Nina',   cues: [0.30, 4.26, 9.02, 16.31, 20.03] },
+  { id: 'maja',  name: 'Maja',  soniox: 'Maya',   cues: [0.30, 4.95, 9.70, 17.59, 21.31] },
+  { id: 'klara', name: 'Klara', soniox: 'Claire', cues: [0.30, 5.03, 9.78, 17.76, 21.49] },
+  { id: 'jaka',  name: 'Jaka',  soniox: 'Jack',   cues: [0.30, 4.26, 9.02, 16.05, 19.78] },
+];
+
+const AUDIO_DIR = 'assets/audio';
 
 // TODO: point this at the real outbound-call endpoint once it exists.
-// The agent server (src/) currently only accepts *inbound* Voximplant calls
-// on /call, so this route has to be built before the form can work.
 const CALL_ENDPOINT = '/api/demo-call';
 
-const NOTE_DEFAULT = 'Klic je brezplačen';
+const NOTE_DEFAULT = 'Layra vas pokliče v nekaj sekundah — brezplačno, brez obveznosti.';
 
-// dashboard/ lives on a separate domain in production (app.<host>) since it
-// needs the agent process behind it, not a static file server — see
-// dashboard/README.md. Derive that origin from wherever this page itself is
-// being served, so the link works both on the real domain and against a
-// local dev server (`npx serve web`, agent on :8080).
+/* dashboard/ lives on app.<host> in production — see dashboard/README.md */
 const { protocol, hostname } = location;
 const loginHref = (hostname === 'localhost' || hostname === '127.0.0.1')
   ? `${protocol}//${hostname}:8080/login.html`
@@ -1360,32 +2507,25 @@ for (const id of ['nav-login', 'foot-login']) {
 }
 
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
 /* ============================================================
-   The wave
-
-   The brand element: a strip of speaking bars, the same family as
-   the wordmark glyph. It idles at a murmur, pulses while the call
-   "rings", and speaks — in the speaker's colour — while a line of
-   the example dialogue is being typed out below it.
-
-   Canvas, one flat layer, transform-free: the same reasoning as
-   the old drop. Nothing here animates a blur or a shadow.
+   The wave — unchanged from predlog 01. A strip of speaking bars
+   in the speaker's colour: azure gradient for Layra, grey for the
+   caller. Canvas, one flat layer, no animated blur or shadow.
    ============================================================ */
 
 const wave = document.getElementById('wave');
 const wctx = wave?.getContext('2d', { alpha: true });
 
-const BAR = 4;                       // bar width, css px
-const SLOT = 7;                      // bar + gap
+const BAR = 4;
+const SLOT = 7;
 const ROUND = typeof Path2D !== 'undefined' && !!wctx?.roundRect;
 
 let W = 0, H = 0, count = 0;
-let P1 = [], P2 = [];                // per-bar phase offsets
+let P1 = [], P2 = [];
 let layraFill = '#1F6FE5';
 
-/* who is "speaking", and how loudly. `act` eases toward `actTo`,
-   so the strip swells and settles instead of snapping. */
 let mode = 'idle';                   // idle | ring | layra | caller
 let act = .12, actTo = .12;
 
@@ -1409,8 +2549,6 @@ function resizeWave() {
   layraFill = g;
 }
 
-/* a speech-shaped envelope: two incommensurate wobbles per bar plus
-   a slow swell travelling across the strip, squared to be spiky */
 function env(i, t) {
   const e = .45 * Math.sin(t * .013 + P1[i])
           + .35 * Math.sin(t * .027 + P2[i])
@@ -1429,7 +2567,6 @@ function drawWave() {
   wctx.clearRect(0, 0, W, H);
   wctx.fillStyle = fillFor();
 
-  // while ringing, the whole strip pulses together instead of talking
   const ring = mode === 'ring' ? (.25 + .75 * Math.abs(Math.sin(clock * .004))) : 1;
 
   const x0 = (W - count * SLOT + (SLOT - BAR)) / 2;
@@ -1484,86 +2621,260 @@ if (wave && wctx) {
   document.addEventListener('visibilitychange', () => (document.hidden ? halt() : run()));
   reduced.addEventListener('change', () => (reduced.matches ? halt() : run()));
 
-  if (reduced.matches) {
-    // one calm frame, never animated
-    act = .8;
-    drawWave();
-  } else {
-    run();
-  }
+  /* one calm frame, never animated. `actTo` has to move with `act`, or the
+     ResizeObserver's first callback resets it to the idle murmur and the
+     strip renders as a flat dotted line. */
+  if (reduced.matches) { act = actTo = .8; drawWave(); } else { run(); }
 }
 
 /* ============================================================
-   The call, playing itself
+   The demo call
 
-   The dialogue is already in the markup (so it reads fine without
-   JS); the player empties each line and types it back while the
-   wave speaks in that speaker's colour, then slides the owner's
-   summary in. Loops forever, slowly enough to be furniture.
+   Two ways to play the same conversation:
+
+   · with audio — the chosen voice's recording drives it. Lines
+     appear on their cue, the wave takes the speaker's colour, the
+     progress bar follows currentTime.
+   · without audio — the silent version types itself on a loop, the
+     way predlog 01 did, and the card says plainly that the
+     recording could not be loaded. We never pretend sound is
+     playing.
+
+   Both share one cancellation token, so choosing a voice mid-loop
+   stops the loop instead of racing it.
    ============================================================ */
 
 const script = document.getElementById('script');
 const slip = document.getElementById('slip');
 const callState = document.getElementById('call-state');
+const picker = document.getElementById('voices');
+const voiceNote = document.getElementById('voice-note');
+const voiceFill = document.getElementById('voice-fill');
+const voiceTime = document.getElementById('voice-time');
+const pills = picker ? [...picker.querySelectorAll('.voice')] : [];
 
-function state(text) {
-  if (callState) callState.textContent = text;
+const lines = script ? [...script.querySelectorAll('.script__line')] : [];
+const texts = lines.map((el) => el.querySelector('.script__text'));
+const full = texts.map((el) => el.textContent);
+
+let token = 0;                       // bumping it cancels whatever is running
+let current = VOICES[0];             // the chosen voice
+let tape = null;                     // its <audio>, once one exists
+
+const state = (t) => { if (callState) callState.textContent = t; };
+const progress = (p) => { if (voiceFill) voiceFill.style.transform = `scaleX(${p})`; };
+const showTime = (sec) => { if (voiceTime) voiceTime.textContent = mmss(sec); };
+
+function mmss(sec) {
+  const s = Math.max(0, Math.round(sec));
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 }
 
-const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+function resetLines() {
+  for (let i = 0; i < lines.length; i++) {
+    lines[i].classList.remove('on', 'saying');
+    texts[i].textContent = full[i];
+  }
+  slip?.classList.remove('on');
+}
+
+function showAll() {
+  token++;
+  for (const el of lines) el.classList.add('on');
+  slip?.classList.add('on');
+  state('termin rezerviran');
+  mode = 'idle'; actTo = .12;
+}
+
+/* ---- silent version: types itself, loops ------------------- */
+
+async function typeInto(el, text, me) {
+  el.textContent = '';
+  for (const ch of text) {
+    if (me !== token) return;
+    el.textContent += ch;
+    await wait(24);
+  }
+}
+
+async function playSilent() {
+  const me = ++token;
+  while (me === token && !reduced.matches) {
+    resetLines();
+    state('zvoni …');
+    mode = 'ring'; actTo = .5;
+    await wait(1700);
+    if (me !== token) return;
+    state('Layra na liniji');
+
+    for (let i = 0; i < lines.length; i++) {
+      if (me !== token) return;
+      mode = lines[i].dataset.who;
+      actTo = 1;
+      lines[i].classList.add('on', 'saying');
+      await typeInto(texts[i], full[i], me);
+      lines[i].classList.remove('saying');
+      mode = 'idle'; actTo = .12;
+      progress((i + 1) / (lines.length + 1));
+      await wait(650);
+    }
+    if (me !== token) return;
+
+    state('termin rezerviran');
+    slip?.classList.add('on');
+    progress(1);
+    await wait(5200);
+    if (me !== token) return;
+
+    resetLines();
+    progress(0);
+    await wait(700);
+  }
+}
+
+/* ---- audio version: the recording drives everything -------- */
+
+/* One <audio> per voice, built on first need and kept. Nothing streams from a
+   service — the files sit next to this page — so the only wait is the browser
+   reading them off disk, and that is done before anyone clicks. */
+const tapes = new Map();
+
+function tapeFor(v) {
+  let a = tapes.get(v.id);
+  if (a) return a;
+
+  a = new Audio(`${AUDIO_DIR}/demo-${v.id}.mp3`);
+  a.preload = 'auto';
+
+  a.addEventListener('loadedmetadata', () => { if (v === current) showTime(a.duration); });
+  a.addEventListener('timeupdate', () => { if (v === current) follow(a, v); });
+  a.addEventListener('error', () => { if (v === current) unavailable(); });
+  a.addEventListener('ended', () => {
+    if (v !== current) return;
+    playing(false);
+    showAll();
+    progress(1);
+    showTime(a.duration);
+    // hand the card back to the silent loop after a beat
+    setTimeout(() => { if (!reduced.matches && a.paused) playSilent(); }, 4000);
+  });
+
+  tapes.set(v.id, a);
+  return a;
+}
+
+/** Index of the last line spoken by `at` seconds into `v`'s recording. */
+function spokenBy(at, v) {
+  let i = -1;
+  for (let k = 0; k < v.cues.length && k < lines.length; k++) if (at >= v.cues[k]) i = k;
+  return i;
+}
+
+/** Runs the transcript, the wave and the bar off the playhead. */
+function follow(a, v) {
+  if (!a.duration) return;
+  progress(a.currentTime / a.duration);
+  showTime(a.duration - a.currentTime);
+
+  const spoken = spokenBy(a.currentTime, v);
+  for (let i = 0; i <= spoken; i++) lines[i].classList.add('on');
+  if (spoken >= 0) {
+    mode = lines[spoken].dataset.who;
+    actTo = 1;
+    state('Layra na liniji');
+  }
+  if (spoken === lines.length - 1) slip?.classList.add('on');
+}
+
+/* the file is missing or the browser will not read it: say so, and let the
+   written version carry the card. We never claim to be playing silence. */
+function unavailable() {
+  playing(false);
+  progress(0);
+  if (voiceNote) voiceNote.textContent = 'Posnetka ni bilo mogoče naložiti — spodaj teče zapis istega klica.';
+  if (voiceTime) voiceTime.textContent = '';
+  playSilent();
+}
+
+function playing(on) {
+  for (const pill of pills) {
+    if (on && pill.dataset.voice === current.id) pill.setAttribute('data-playing', '');
+    else pill.removeAttribute('data-playing');
+  }
+}
+
+function select(v) {
+  current = v;
+  tape = tapeFor(v);
+  for (const pill of pills) pill.setAttribute('aria-pressed', String(pill.dataset.voice === v.id));
+  if (tape.duration) showTime(tape.duration);
+}
+
+function start(v, at) {
+  const a = tapeFor(v);
+  token++;                            // stop the silent loop, the tape takes over
+  if (!at) { resetLines(); progress(0); }
+  try { a.currentTime = at; } catch { /* metadata not in yet; it starts at 0 */ }
+  a.play().then(() => {
+    playing(true);
+    state('predvajam posnetek');
+  }).catch(() => { if (v === current) unavailable(); });
+}
+
+/* Choosing a voice is what plays the call. Choosing the one already talking
+   stops it; choosing a different one keeps your place in the conversation and
+   picks up at the same line — the only way to hear two voices say the same
+   sentence, and the only ending that matches the transcript already on screen. */
+function choose(v) {
+  if (v === current && tape && !tape.paused) {
+    tape.pause();
+    playing(false);
+    state('ustavljeno');
+    mode = 'idle'; actTo = .12;
+    return;
+  }
+
+  let at = 0;
+  if (tape) {
+    if (v === current) {
+      // paused part-way through: carry on rather than start again
+      at = tape.ended ? 0 : tape.currentTime;
+    } else {
+      const line = tape.currentTime > 0 && !tape.ended ? spokenBy(tape.currentTime, current) : -1;
+      tape.pause();
+      tape.currentTime = 0;
+      if (line >= 0) at = v.cues[line];
+    }
+  }
+
+  select(v);
+  start(v, at);
+}
+
+for (const pill of pills) {
+  const v = VOICES.find((x) => x.id === pill.dataset.voice);
+  if (!v) continue;
+  pill.setAttribute('aria-label', `Poslušajte primer klica z glasom ${v.name}`);
+  // warm the file on hover, so the click is instant even on a cold cache
+  pill.addEventListener('pointerenter', () => tapeFor(v), { once: true });
+  pill.addEventListener('click', () => choose(v));
+}
+
+/* the chosen voice is ready before anyone asks for it; the other three follow
+   once the page has finished loading, so they cost nothing up front */
+select(current);
+addEventListener('load', () => {
+  const soon = window.requestIdleCallback || ((f) => setTimeout(f, 500));
+  soon(() => { for (const v of VOICES) tapeFor(v); });
+});
 
 if (script && slip) {
-  const lines = [...script.querySelectorAll('.script__line')];
-  const texts = lines.map((el) => el.querySelector('.script__text'));
-  const full = texts.map((el) => el.textContent);
-
-  const showAll = () => {
-    for (const el of lines) el.classList.add('on');
-    slip.classList.add('on');
-    state('povzetek poslan');
-  };
-
-  async function type(el, text) {
-    el.textContent = '';
-    for (const ch of text) {
-      el.textContent += ch;
-      await wait(24);
-      if (reduced.matches) { el.textContent = text; return; }
-    }
-  }
-
-  async function play() {
-    while (!reduced.matches) {
-      state('zvoni …');
-      mode = 'ring'; actTo = .5;
-      await wait(1700);
-      state('Layra na liniji');
-
-      for (let i = 0; i < lines.length; i++) {
-        mode = lines[i].dataset.who;
-        actTo = 1;
-        lines[i].classList.add('on', 'saying');
-        await type(texts[i], full[i]);
-        lines[i].classList.remove('saying');
-        mode = 'idle'; actTo = .12;
-        await wait(650);
-      }
-
-      state('povzetek poslan');
-      slip.classList.add('on');
-      await wait(5200);
-
-      for (const el of lines) el.classList.remove('on');
-      slip.classList.remove('on');
-      await wait(700);
-    }
-    showAll();
-  }
-
   if (reduced.matches) showAll();
-  else play();
+  else playSilent();
 
-  reduced.addEventListener('change', () => { if (reduced.matches) showAll(); });
+  reduced.addEventListener('change', () => {
+    if (reduced.matches) { tape?.pause(); playing(false); showAll(); }
+  });
 }
 
 /* ---- reveal on scroll -------------------------------------- */
@@ -1578,14 +2889,46 @@ const seen = new IntersectionObserver((entries) => {
 
 for (const el of document.querySelectorAll('[data-reveal]')) seen.observe(el);
 
+/* the calendar slot and the phone hang off the same `.in` the reveal
+   observer sets on #stage — the staging is CSS transition delays, so
+   the sequence needs no second observer and no timers. */
+
+/* ---- the loss calculator ----------------------------------- */
+
+/* Every number here is the visitor's own. The halving is stated on
+   screen, not hidden in the maths — the point is credibility, and a
+   figure they can argue with is worth more than one they can't. */
+const calls = document.getElementById('calls');
+const price = document.getElementById('price');
+const outCalls = document.getElementById('out-calls');
+const outPrice = document.getElementById('out-price');
+const calcNum = document.getElementById('calc-num');
+
+const WEEKS = 4.33;
+const SHOW_RATE = .5;               // half of missed calls would have booked
+
+function recalc() {
+  if (!calls || !price) return;
+  const c = Number(calls.value);
+  const p = Number(price.value);
+  const monthly = Math.round((c * WEEKS * p * SHOW_RATE) / 10) * 10;
+
+  if (outCalls) outCalls.textContent = c;
+  if (outPrice) outPrice.textContent = `${p} €`;
+  if (calcNum) calcNum.textContent = `≈ ${monthly.toLocaleString('sl-SI')} €`;
+}
+
+calls?.addEventListener('input', recalc);
+price?.addEventListener('input', recalc);
+document.getElementById('calc')?.addEventListener('submit', (e) => e.preventDefault());
+recalc();
+
 /* ---- the dial ---------------------------------------------- */
 
 const form = document.getElementById('dial');
 const input = document.getElementById('tel');
 const note = document.getElementById('dial-note');
 const noteText = note?.querySelector('.assure__text');
-const button = form?.querySelector('.dial__go');
-const label = form?.querySelector('.dial__label');
 
 /** Digits only, trunk prefix removed. Slovene national numbers are 8 digits. */
 function nationalDigits(value) {
@@ -1601,8 +2944,6 @@ function format(value) {
     .join(' ');
 }
 
-/* Writes into the reassurance line. Without a state it reverts to the
-   uppercase label with its shield; with one it becomes a sentence. */
 function say(message, msgState) {
   if (!noteText) return;
   noteText.textContent = message;
@@ -1627,12 +2968,13 @@ form?.addEventListener('submit', (e) => {
   say('To je ogled — klic tu ni povezan.', 'success');
 });
 
-/* the closing invitation leads back to the dial */
-document.getElementById('finale-leave')?.addEventListener('click', () => {
-  input?.scrollIntoView({ behavior: reduced.matches ? 'auto' : 'smooth', block: 'center' });
-  // focus after the scroll has had a moment, so the page doesn't jump
-  setTimeout(() => input?.focus({ preventScroll: true }), reduced.matches ? 0 : 450);
-});
+/* every "preizkusite" button on the page leads to the one field that matters */
+for (const el of document.querySelectorAll('[data-try]')) {
+  el.addEventListener('click', () => {
+    input?.scrollIntoView({ behavior: reduced.matches ? 'auto' : 'smooth', block: 'center' });
+    setTimeout(() => input?.focus({ preventScroll: true }), reduced.matches ? 0 : 450);
+  });
+}
   </script>
 </body>
 
